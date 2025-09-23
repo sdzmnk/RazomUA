@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.razomua.R
+import com.example.razomua.ui.theme.Montserrat
 import com.example.razomua.ui.theme.RazomUATheme
 
 @Composable
@@ -55,7 +56,7 @@ fun WelcomeScreen() {
                 .height(50.dp)
                 .padding(horizontal = 16.dp)
         ) {
-            Text(text = "Створити профіль", color = Color.White, fontSize = 16.sp)
+            Text(text = "Створити профіль", color = Color.White, fontSize = 16.sp, fontFamily = Montserrat )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -69,7 +70,7 @@ fun WelcomeScreen() {
                 .height(50.dp)
                 .padding(horizontal = 16.dp)
         ) {
-            Text(text = "Увійти", color = Color.White, fontSize = 16.sp)
+            Text(text = "Увійти", color = Color.White, fontSize = 16.sp, fontFamily = Montserrat)
         }
     }
 }
