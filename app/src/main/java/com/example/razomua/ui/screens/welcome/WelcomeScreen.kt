@@ -19,9 +19,11 @@ import androidx.compose.ui.unit.sp
 import com.example.razomua.R
 import com.example.razomua.ui.theme.Montserrat
 import com.example.razomua.ui.theme.RazomUATheme
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -48,7 +50,7 @@ fun WelcomeScreen() {
         )
 
         Button(
-            onClick = { /* TODO: Navigate to CreateProfileScreen */ },
+            onClick = { navController.navigate("register") },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252)),
             shape = RoundedCornerShape(50),
             modifier = Modifier
@@ -62,7 +64,7 @@ fun WelcomeScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(
-            onClick = { /* TODO: Navigate to LoginScreen */ },
+            onClick = { navController.navigate("login") },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252)),
             shape = RoundedCornerShape(50),
             modifier = Modifier
@@ -79,6 +81,6 @@ fun WelcomeScreen() {
 @Composable
 fun WelcomeScreenPreview() {
     RazomUATheme {
-        WelcomeScreen()
+        WelcomeScreen(navController = rememberNavController())
     }
 }

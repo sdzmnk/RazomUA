@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RazomUATheme {
-                WelcomeScreen()
+                com.example.razomua.navigation.AppNavHost()
             }
         }
     }
