@@ -1,5 +1,6 @@
 package com.example.razomua.ui.screens.register
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -21,7 +22,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
-
+import com.example.razomua.ui.theme.Blue
+import com.example.razomua.ui.theme.GrayMedium
 
 @Preview(showBackground = true)
 @Composable
@@ -32,59 +34,63 @@ fun RegisterScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Введи свої дані, щоб продовжити",
-            fontSize = 24.sp,
-            color = Color(0xFF3A3AFD)
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            placeholder = { Text("example@gmail.com") },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            shape = CircleShape
-
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            placeholder = { Text("Пароль") },
-            visualTransformation = PasswordVisualTransformation(),
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            shape = CircleShape
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = { /* TODO: логіка входу */ },
-            shape = CircleShape,
-            modifier = Modifier.size(56.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+        Column(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Login",
-                tint = Color.White
+            Text(
+                text = "Введи свої дані, щоб продовжити",
+                fontSize = 24.sp,
+                color = Blue,
+                modifier = Modifier.padding(top = 80.dp, bottom = 40.dp)
+            )
+
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                placeholder = { Text("example@gmail.com", color = GrayMedium) },
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, GrayMedium, CircleShape),
+                shape = CircleShape,
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                placeholder = { Text("Пароль", color = GrayMedium) },
+                visualTransformation = PasswordVisualTransformation(),
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .border(1.dp, GrayMedium, CircleShape),
+                shape = CircleShape
             )
         }
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.End
+        ) {
+            Button(
+                onClick = { /* TODO: логіка входу */ },
+                shape = CircleShape,
+                modifier = Modifier
+                    .padding(bottom = 40.dp)
+                    .size(70.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Login",
+                    tint = Color.White
+                )
+            }
+        }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun RegisterScreenPreview() {
-    RegisterScreen()
 }
