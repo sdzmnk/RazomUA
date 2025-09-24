@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 
+
+@Preview(showBackground = true)
 @Composable
 fun RegisterScreen() {
     var email by remember { mutableStateOf("") }
@@ -30,37 +32,38 @@ fun RegisterScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Введи свої дані, щоб продовжити",
-            fontSize = 18.sp,
-            color = Color(0xFF3A3AFD) // синій текст
+            fontSize = 24.sp,
+            color = Color(0xFF3A3AFD)
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Email
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             placeholder = { Text("example@gmail.com") },
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = CircleShape
+
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Пароль
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             placeholder = { Text("Пароль") },
             visualTransformation = PasswordVisualTransformation(),
             singleLine = true,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            shape = CircleShape
         )
 
         Spacer(modifier = Modifier.height(32.dp))
