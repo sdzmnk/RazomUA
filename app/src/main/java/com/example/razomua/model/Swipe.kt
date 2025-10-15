@@ -12,6 +12,6 @@ data class Swipe(
     val id: Long,
     val fromUserId: Long,
     val toUserId: Long,
-    val action: SwipeAction,
+    val action: String,
     val createdAt: String
 )

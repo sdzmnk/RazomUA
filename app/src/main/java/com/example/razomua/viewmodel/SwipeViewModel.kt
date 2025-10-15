@@ -17,7 +17,7 @@ class SwipeViewModel : ViewModel() {
             id = Random.nextLong(1, Long.MAX_VALUE),
             fromUserId = fromUserId,
             toUserId = toUserId,
-            action = action,
+            action = action.name,
             createdAt = String()
         )
         _swipes.value = _swipes.value + newSwipe
@@ -25,13 +25,5 @@ class SwipeViewModel : ViewModel() {
 
     private fun generateSwipeId(): Long {
         return Random.nextLong(1, Long.MAX_VALUE)
-    }
-
-    fun getLikesFromUser(userId: Long): List<Swipe> {
-        return _swipes.value?.filter { it.fromUserId == userId && it.action == SwipeAction.LIKE } ?: emptyList()
-    }
-
-    fun getDislikesFromUser(userId: Long): List<Swipe> {
-        return _swipes.value?.filter { it.fromUserId == userId && it.action == SwipeAction.DISLIKE } ?: emptyList()
     }
 }
