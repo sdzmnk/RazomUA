@@ -5,7 +5,6 @@ import com.example.razomua.model.Swipe
 import com.example.razomua.model.SwipeAction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.*
 import kotlin.random.Random
 
 class SwipeViewModel : ViewModel() {
