@@ -1,15 +1,31 @@
 package com.example.razomua.repository
 
+import com.example.razomua.data.local.dao.UserDao
+import com.example.razomua.data.local.mapper.toDomain
+import com.example.razomua.data.local.mapper.toEntity
 import com.example.razomua.model.User
 import com.example.razomua.network.UserApiService
 import com.example.razomua.network.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class UserRepository {
+class UserRepository(
+    private val userDao: UserDao,                   // локальна база
+    private val api: UserApiService = RetrofitInstance.apiUser // мережа
+) {
 
-    private val api = RetrofitInstance.apiUser
+    // Offline-first
 
+    suspend fun getUserLocalFirst(id: Long): User? {
+        val localUser = userDao.getUserById(id)?.toDomain()
+        if (localUser != null) return localUser
+
+        val result = getUser(id)
+        result.getOrNull()?.let { userDao.insert(it.toEntity()) } // зберігаємо локально
+        return result.getOrNull()
+    }
+
+    // Методи роботи з API
     suspend fun getUser(id: Long): Result<User> = withContext(Dispatchers.IO) {
         try {
             val response = api.getUser(id)
@@ -49,6 +65,16 @@ class UserRepository {
             }
         } catch (e: Exception) {
             Result.failure(Exception("Network error: ${e.localizedMessage}"))
+        }
+    }
+
+    // Оновлення локальної бази через сервер (для Worker)
+    suspend fun refreshUsersFromServer() {
+        val response = api.getAllUsers()
+        if (response.isSuccessful) {
+            response.body()?.forEach {
+                userDao.insert(it.toEntity())
+            }
         }
     }
 

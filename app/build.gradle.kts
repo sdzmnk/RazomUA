@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.adapters)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.tracing.perfetto.handshake)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

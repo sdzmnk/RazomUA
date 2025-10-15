@@ -1,14 +1,42 @@
 package com.example.razomua.repository
 
+import com.example.razomua.data.local.dao.ProfileDao
+import com.example.razomua.data.local.mapper.toDomain
+import com.example.razomua.data.local.mapper.toEntity
 import com.example.razomua.model.Profile
 import com.example.razomua.network.ProfileApiService
 import com.example.razomua.network.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class ProfileRepository {
+class ProfileRepository(
+    private val profileDao: ProfileDao,                 // локальна база
+    private val api: ProfileApiService = RetrofitInstance.apiProfile // мережа
+)  {
 
-    private val api = RetrofitInstance.apiProfile
+    // Offline-first:
+    suspend fun getProfileLocalFirst(userId: Long): Profile? {
+        val localProfile = profileDao.getProfileByUserId(userId)?.toDomain()
+        if (localProfile != null) return localProfile
+
+        val result = getProfileFromApi(userId)
+        result.getOrNull()?.let { profileDao.insert(it.toEntity()) } // зберігаємо локально
+        return result.getOrNull()
+    }
+
+    suspend fun getProfileFromApi(userId: Long): Result<Profile> = withContext(Dispatchers.IO) {
+        try {
+            val response = api.getProfile(userId)
+            if (response.isSuccessful) {
+                response.body()?.let { Result.success(it) }
+                    ?: Result.failure(Exception("Профіль не знайдено"))
+            } else {
+                Result.failure(Exception(handleApiError(response.code())))
+            }
+        } catch (e: Exception) {
+            Result.failure(Exception("Network error: ${e.localizedMessage}"))
+        }
+    }
 
     suspend fun getProfiles(): Result<List<Profile>> = withContext(Dispatchers.IO) {
         try {
@@ -48,6 +76,16 @@ class ProfileRepository {
             }
         } catch (e: Exception) {
             Result.failure(Exception("Network error: ${e.localizedMessage}"))
+        }
+    }
+
+    // Оновлення локальної бази через сервер (для Worker)
+    suspend fun refreshProfilesFromServer() {
+        val response = api.getAllProfiles()
+        if (response.isSuccessful) {
+            response.body()?.forEach {
+                profileDao.insert(it.toEntity())
+            }
         }
     }
 
