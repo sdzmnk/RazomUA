@@ -10,6 +10,6 @@ data class UserEntity(
     @PrimaryKey val id: Long,
     val name: String,
     val gender: Gender,
-    val birthday: LocalDate?,
+    val birthday: String,
     val email: String
 )

@@ -11,5 +11,5 @@ data class SwipeEntity(
     val fromUserId: Long,
     val toUserId: Long,
     val action: SwipeAction,
-    val createdAt: Date
+    val createdAt: String
 )

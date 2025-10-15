@@ -34,7 +34,7 @@ class UserViewModel : ViewModel() {
                 id = 1,
                 name = "Олена",
                 gender = Gender.FEMALE,
-                birthday = LocalDate.of(1995, 6, 15),
+                birthday = "1995-06-15",
                 email = "olena@example.com"
             )
         )

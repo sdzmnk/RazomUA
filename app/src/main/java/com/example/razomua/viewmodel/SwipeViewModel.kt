@@ -19,7 +19,7 @@ class SwipeViewModel : ViewModel() {
             fromUserId = fromUserId,
             toUserId = toUserId,
             action = action,
-            createdAt = Date()
+            createdAt = String()
         )
 
         _swipes.value = _swipes.value?.plus(newSwipe)
