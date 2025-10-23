@@ -21,7 +21,7 @@ class UserRepository(
         if (localUser != null) return localUser
 
         val result = getUser(id)
-        result.getOrNull()?.let { userDao.insert(it.toEntity()) } // зберігаємо локально
+        result.getOrNull()?.let { userDao.insert(it.toEntity()) }
         return result.getOrNull()
     }
 

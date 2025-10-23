@@ -33,7 +33,7 @@ fun WelcomeScreen(navController: NavController) {
     ) {
 
         Image(
-            painter = painterResource(id = R.drawable.logo), // свій логотип поклади у res/drawable/logo.png
+            painter = painterResource(id = R.drawable.logo),
             contentDescription = "App Logo",
             modifier = Modifier
                 .size(200.dp)
