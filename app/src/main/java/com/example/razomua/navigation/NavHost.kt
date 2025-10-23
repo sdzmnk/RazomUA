@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.razomua.ui.screens.login.LoginScreen
 import com.example.razomua.ui.screens.register.RegisterScreen
 import com.example.razomua.ui.screens.welcome.ChatScreen
+import com.example.razomua.ui.screens.welcome.ProfileScreen
 import com.example.razomua.ui.screens.welcome.SwipeScreen
 import com.example.razomua.ui.screens.welcome.WelcomeScreen
 
@@ -24,6 +25,9 @@ fun AppNavHost() {
         }
         composable("chat") {
             ChatScreen(navController = navController)
+        }
+        composable("profile") {
+            ProfileScreen(navController = navController)
         }
     }
 }

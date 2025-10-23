@@ -28,7 +28,6 @@ import androidx.navigation.NavController
 import com.example.razomua.R
 import com.example.razomua.model.SwipeAction
 import com.example.razomua.viewmodel.SwipeViewModel
-import kotlin.math.abs
 
 @Composable
 fun SwipeScreen(navController: NavController, viewModel: SwipeViewModel = viewModel()) {
@@ -41,135 +40,172 @@ fun SwipeScreen(navController: NavController, viewModel: SwipeViewModel = viewMo
         Triple("Олег", "Харків", R.drawable.boy)
     )
 
-    if (currentCardIndex >= users.size) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                "Користувачів більше немає ☹️",
-                style = MaterialTheme.typography.bodyLarge
-            )
-        }
-        return
-    }
-
-    val (name, location, imageRes) = users[currentCardIndex]
     val rotation by animateFloatAsState(targetValue = offsetX / 20)
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Card(
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(0.6f)
-                    .offset(x = offsetX.dp)
-                    .rotate(rotation)
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragEnd = {
-                                when {
-                                    offsetX > 200 -> {
-                                        // swipe right (like)
-                                        viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.LIKE)
-                                        currentCardIndex++
-                                    }
-                                    offsetX < -200 -> {
-                                        // swipe left (nope)
-                                        viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.DISLIKE)
-                                        currentCardIndex++
-                                    }
-                                }
-                                offsetX = 0f
-                            }
-                        ) { change, dragAmount ->
-                            change.consume()
-                            offsetX += dragAmount.x
-                        }
-                    },
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(6.dp)
+    Scaffold(
+        bottomBar = {
+            BottomAppBar(
+                containerColor = Color.White,
+                tonalElevation = 4.dp
             ) {
-                Box {
-                    Image(
-                        painter = painterResource(id = imageRes),
-                        contentDescription = "User photo",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-
-                    Box(modifier = Modifier.align(Alignment.TopStart).padding(12.dp)) {
-                        Text(
-                            text = "$name, 25",
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { navController.navigate("chat") }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.chats),
+                            contentDescription = "Chats",
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
                         )
                     }
 
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(start = 12.dp, top = 40.dp)
-                            .background(
-                                color = Color(0x66000000),
-                                shape = RoundedCornerShape(12.dp)
-                            )
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                    ) {
-                        Text("📍 $location", color = Color.White, fontSize = 14.sp)
+                    IconButton(onClick = { navController.navigate("swipe") }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.cards),
+                            contentDescription = "Swipes",
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+
+                    IconButton(onClick = { navController.navigate("profile") }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.user),
+                            contentDescription = "Profile",
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
                     }
                 }
             }
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(Color.White),
+            contentAlignment = Alignment.Center
+        ) {
+            if (currentCardIndex >= users.size) {
+                Text(
+                    "Користувачів більше немає ☹️",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            } else {
+                val (name, location, imageRes) = users[currentCardIndex]
 
-            Spacer(modifier = Modifier.height(24.dp))
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Card(
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(0.6f)
+                            .offset(x = offsetX.dp)
+                            .rotate(rotation)
+                            .pointerInput(Unit) {
+                                detectDragGestures(
+                                    onDragEnd = {
+                                        when {
+                                            offsetX > 200 -> {
+                                                viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.LIKE)
+                                                currentCardIndex++
+                                            }
+                                            offsetX < -200 -> {
+                                                viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.DISLIKE)
+                                                currentCardIndex++
+                                            }
+                                        }
+                                        offsetX = 0f
+                                    }
+                                ) { change, dragAmount ->
+                                    change.consume()
+                                    offsetX += dragAmount.x
+                                }
+                            },
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        elevation = CardDefaults.cardElevation(6.dp)
+                    ) {
+                        Box {
+                            Image(
+                                painter = painterResource(id = imageRes),
+                                contentDescription = "User photo",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(0.6f)
-            ) {
-                IconButton(
-                    onClick = {
-                        viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.DISLIKE)
-                        currentCardIndex++
-                    },
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFDECEC))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Dislike",
-                        tint = Color(0xFFE53935),
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
+                            Box(modifier = Modifier.align(Alignment.TopStart).padding(12.dp)) {
+                                Text(
+                                    text = "$name, 25",
+                                    fontSize = 20.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
 
-                IconButton(
-                    onClick = {
-                        viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.LIKE)
-                        currentCardIndex++
-                    },
-                    modifier = Modifier
-                        .size(64.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFE8F5E9))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "Like",
-                        tint = Color(0xFF43A047),
-                        modifier = Modifier.size(32.dp)
-                    )
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(start = 12.dp, top = 40.dp)
+                                    .background(
+                                        color = Color(0x66000000),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            ) {
+                                Text("📍 $location", color = Color.White, fontSize = 14.sp)
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(0.6f)
+                    ) {
+                        IconButton(
+                            onClick = {
+                                viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.DISLIKE)
+                                currentCardIndex++
+                            },
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFFDECEC))
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Dislike",
+                                tint = Color(0xFFE53935),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.LIKE)
+                                currentCardIndex++
+                            },
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFFE8F5E9))
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Favorite,
+                                contentDescription = "Like",
+                                tint = Color(0xFF43A047),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
                 }
             }
         }

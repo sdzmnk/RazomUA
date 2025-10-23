@@ -2,24 +2,17 @@ package com.example.razomua.ui.screens.welcome
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.razomua.R
 
 @Composable
-fun ChatScreen(navController: NavController) {
-
+fun ProfileScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -31,7 +24,7 @@ fun ChatScreen(navController: NavController) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Сторінка чату",
+                text = "Сторінка профілю",
                 style = MaterialTheme.typography.headlineMedium,
                 color = Color.Black
             )
@@ -39,7 +32,7 @@ fun ChatScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Тут пізніше буде реалізовано чат",
+                text = "Тут пізніше буде реалізовано профіль",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
