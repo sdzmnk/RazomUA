@@ -7,6 +7,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.razomua.ui.screens.login.LoginScreen
 import com.example.razomua.ui.screens.register.RegisterScreen
 import com.example.razomua.ui.screens.welcome.ChatScreen
+import com.example.razomua.ui.screens.welcome.DiagramScreen
+import com.example.razomua.ui.screens.welcome.GoogleMapsScreen
 import com.example.razomua.ui.screens.welcome.ProfileScreen
 import com.example.razomua.ui.screens.welcome.SwipeScreen
 import com.example.razomua.ui.screens.welcome.WelcomeScreen
@@ -28,6 +30,12 @@ fun AppNavHost() {
         }
         composable("profile") {
             ProfileScreen(navController = navController)
+        }
+        composable("googlemaps") {
+            GoogleMapsScreen(navController = navController)
+        }
+        composable("diagram") {
+            DiagramScreen(navController = navController)
         }
     }
 }

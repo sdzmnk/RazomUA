@@ -2,7 +2,6 @@ package com.example.razomua.ui.screens.welcome
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -10,13 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.razomua.R
-import com.example.razomua.ui.theme.Montserrat
 
 @Composable
-fun ProfileScreen(navController: NavController) {
+fun GoogleMapsScreen(navController: NavController) {
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -72,7 +69,7 @@ fun ProfileScreen(navController: NavController) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Сторінка профілю",
+                    text = "Сторінка гугл карт",
                     style = MaterialTheme.typography.headlineMedium,
                     color = Color.Black
                 )
@@ -80,38 +77,10 @@ fun ProfileScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Тут пізніше буде реалізовано профіль",
+                    text = "Тут пізніше буде реалізовано гугл карти",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray
                 )
-
-                Button(
-                    onClick = { navController.navigate("diagram") },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252)),
-                    shape = RoundedCornerShape(50),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(text = "Переглянути статистику", color = Color.White, fontSize = 16.sp, fontFamily = Montserrat )
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Button(
-                    onClick = { navController.navigate("googlemaps") },
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252)),
-                    shape = RoundedCornerShape(50),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(50.dp)
-                        .padding(horizontal = 16.dp)
-                ) {
-                    Text(text = "Хто поруч", color = Color.White, fontSize = 16.sp, fontFamily = Montserrat)
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
