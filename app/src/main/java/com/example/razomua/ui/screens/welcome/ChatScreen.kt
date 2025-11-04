@@ -2,12 +2,7 @@ package com.example.razomua.ui.screens.welcome
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,30 +14,74 @@ import com.example.razomua.R
 
 @Composable
 fun ChatScreen(navController: NavController) {
+    Scaffold(
+        bottomBar = {
+            BottomAppBar(
+                containerColor = Color.White,
+                tonalElevation = 4.dp
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(onClick = { navController.navigate("chat") }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.chats),
+                            contentDescription = "Chats",
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF5F5F5)),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                    IconButton(onClick = { navController.navigate("swipe") }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.cards),
+                            contentDescription = "Swipes",
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+
+                    IconButton(onClick = { navController.navigate("profile") }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.user),
+                            contentDescription = "Profile",
+                            tint = Color.Black,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
+                }
+            }
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xFFF5F5F5))
+                .padding(innerPadding),
+            contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = "Сторінка чату",
-                style = MaterialTheme.typography.headlineMedium,
-                color = Color.Black
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Сторінка чату",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.Black
+                )
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Тут пізніше буде реалізовано чат",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
-            )
+                Text(
+                    text = "Тут пізніше буде реалізовано чат",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
         }
     }
 }
