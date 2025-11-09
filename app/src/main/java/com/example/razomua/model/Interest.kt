@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Interest(
-    val id: Long,
+    val id: Int,
     val name: String
 )

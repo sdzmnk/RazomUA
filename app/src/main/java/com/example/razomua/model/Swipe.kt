@@ -9,9 +9,9 @@ enum class SwipeAction {
 
 @Serializable
 data class Swipe(
-    val id: Long,
-    val fromUserId: Long,
-    val toUserId: Long,
+    val id: Int,
+    val fromUserId: Int,
+    val toUserId: Int,
     val action: String,
     val createdAt: String
 )

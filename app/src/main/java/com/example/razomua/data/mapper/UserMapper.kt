@@ -8,7 +8,8 @@ fun User.toEntity() = UserEntity(
     name = name,
     gender = gender,
     birthday = birthday,
-    email = email
+    email = email,
+    password = password
 )
 
 fun UserEntity.toDomain() = User(
@@ -16,5 +17,6 @@ fun UserEntity.toDomain() = User(
     name = name,
     gender = gender,
     birthday = birthday,
-    email = email
+    email = email,
+    password = password
 )

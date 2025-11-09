@@ -12,9 +12,9 @@ class SwipeViewModel : ViewModel() {
     private val _swipes = MutableStateFlow<List<Swipe>>(emptyList())
     val swipesFlow = _swipes.asStateFlow()
 
-    fun addSwipe(fromUserId: Long, toUserId: Long, action: SwipeAction) {
+    fun addSwipe(fromUserId: Int, toUserId: Int, action: SwipeAction) {
         val newSwipe = Swipe(
-            id = Random.nextLong(1, Long.MAX_VALUE),
+            id = Random.nextInt(1, Int.MAX_VALUE),
             fromUserId = fromUserId,
             toUserId = toUserId,
             action = action.name,

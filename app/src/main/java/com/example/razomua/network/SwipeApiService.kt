@@ -10,8 +10,8 @@ interface SwipeApiService {
     suspend fun sendSwipe(@Body swipe: Swipe): Response<Swipe>
 
     @GET("swipes/user/{id}")
-    suspend fun getUserSwipes(@Path("id") id: Long): Response<List<Swipe>>
+    suspend fun getUserSwipes(@Path("id") id: Int): Response<List<Swipe>>
 
     @GET("swipes/matches/{userId}")
-    suspend fun getMatches(@Path("userId") userId: Long): Response<List<Swipe>>
+    suspend fun getMatches(@Path("userId") userId: Int): Response<List<Swipe>>
 }

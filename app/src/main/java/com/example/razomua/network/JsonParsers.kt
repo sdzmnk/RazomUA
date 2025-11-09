@@ -9,17 +9,18 @@ import kotlinx.serialization.json.*
 // DTO класи для парсингу
 @Serializable
 data class UserDTO(
-    val id: Long,
-    val name: String,
+    val id: Int,
+    val name: String? = null,
     val email: String,
-    val gender: String,
-    val birthday: String? = null
+    val gender: String? = null,
+    val birthday: String? = null,
+    val password: String,
 )
 
 @Serializable
 data class ProfileDTO(
-    val id: Long,
-    val userId: Long,
+    val id: Int,
+    val userId: Int,
     val photoUrl: String? = null,
     val location: String? = null
 )
@@ -27,8 +28,8 @@ data class ProfileDTO(
 @Serializable
 data class SwipeDTO(
     val id: Long,
-    val fromUserId: Long,
-    val toUserId: Long,
+    val fromUserId: Int,
+    val toUserId: Int,
     val action: String,
     val createdAt: String
 )
@@ -42,7 +43,8 @@ fun parseUsersJson(jsonString: String): List<User> {
             name = dto.name,
             email = dto.email,
             gender = dto.gender,
-            birthday = dto.birthday
+            birthday = dto.birthday,
+            password = dto.password,
         )
     }
 }
@@ -63,7 +65,7 @@ fun parseSwipesJson(jsonString: String): List<Swipe> {
     val dtoList = Json.decodeFromString<List<SwipeDTO>>(jsonString)
     return dtoList.map { dto ->
         Swipe(
-            id = dto.id,
+            id = dto.id.toInt(),
             fromUserId = dto.fromUserId,
             toUserId = dto.toUserId,
             action = dto.action,
