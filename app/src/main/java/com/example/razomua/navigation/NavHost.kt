@@ -12,6 +12,7 @@ import com.example.razomua.ui.screens.welcome.ChatScreen
 import com.example.razomua.ui.screens.welcome.DiagramScreen
 import com.example.razomua.ui.screens.welcome.GoogleMapsScreen
 import com.example.razomua.ui.screens.welcome.ProfileScreen
+import com.example.razomua.ui.screens.welcome.RegistrationPart2Screen
 import com.example.razomua.ui.screens.welcome.SwipeScreen
 import com.example.razomua.ui.screens.welcome.WelcomeScreen
 
@@ -24,7 +25,8 @@ fun AppNavHost() {
         composable("login") {
             LoginScreen(navController = navController)
         }
-        composable("register") { RegisterScreen() }
+        composable("register") {
+            RegisterScreen(navController = navController)}
         composable("swipe") {
             SwipeScreen(navController = navController)
         }
@@ -39,6 +41,10 @@ fun AppNavHost() {
         }
         composable("diagram") {
             DiagramScreen(navController = navController)
+        }
+
+        composable("register2") {
+            RegistrationPart2Screen(navController = navController)
         }
     }
 }

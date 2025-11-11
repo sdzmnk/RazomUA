@@ -24,15 +24,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Создаём базу
         val db = DatabaseProvider.getDatabase(this)
 
-        // Создаём репозиторий
         val repository = UserRepository(db.userDao())
 
-        // Тест: добавляем пользователя и выводим всех
         CoroutineScope(Dispatchers.IO).launch {
-            // Добавляем тестового пользователя
+
             val testUser = UserEntity(
                 id = 1,
                 name = "Sofiia",
@@ -43,7 +40,6 @@ class MainActivity : ComponentActivity() {
             )
             db.userDao().insert(testUser)
 
-            // Получаем всех пользователей и выводим в Logcat
             val users = repository.getAllUsersLocal()
             users.forEach { Log.d("DB_TEST", it.toString()) }
         }

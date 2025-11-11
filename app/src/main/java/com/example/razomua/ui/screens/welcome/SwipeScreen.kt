@@ -113,11 +113,12 @@ fun SwipeScreen(navController: NavController, viewModel: SwipeViewModel = viewMo
                                     onDragEnd = {
                                         when {
                                             offsetX > 200 -> {
-                                                viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.LIKE)
+                                                viewModel.addSwipe(1,
+                                                    currentCardIndex, SwipeAction.LIKE)
                                                 currentCardIndex++
                                             }
                                             offsetX < -200 -> {
-                                                viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.DISLIKE)
+                                                viewModel.addSwipe(1, currentCardIndex, SwipeAction.DISLIKE)
                                                 currentCardIndex++
                                             }
                                         }
@@ -172,7 +173,7 @@ fun SwipeScreen(navController: NavController, viewModel: SwipeViewModel = viewMo
                     ) {
                         IconButton(
                             onClick = {
-                                viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.DISLIKE)
+                                viewModel.addSwipe(1, currentCardIndex, SwipeAction.DISLIKE)
                                 currentCardIndex++
                             },
                             modifier = Modifier
@@ -190,7 +191,7 @@ fun SwipeScreen(navController: NavController, viewModel: SwipeViewModel = viewMo
 
                         IconButton(
                             onClick = {
-                                viewModel.addSwipe(1, currentCardIndex.toLong(), SwipeAction.LIKE)
+                                viewModel.addSwipe(1, currentCardIndex, SwipeAction.LIKE)
                                 currentCardIndex++
                             },
                             modifier = Modifier

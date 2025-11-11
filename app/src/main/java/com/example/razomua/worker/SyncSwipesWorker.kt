@@ -12,7 +12,7 @@ class SyncSwipesWorker(
     override suspend fun doWork(): Result {
         return try {
             val swipeRepo = SwipeRepository(RazomUAApp.database.swipeDao())
-            val userId = inputData.getLong("userId", 0)
+            val userId = inputData.getInt("userId", 0)
             swipeRepo.refreshSwipesFromServer(userId)
             Result.success()
         } catch (e: Exception) {

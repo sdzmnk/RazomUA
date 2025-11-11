@@ -25,88 +25,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.razomua.ui.theme.Blue
 import com.example.razomua.ui.theme.GrayMedium
 import com.example.razomua.viewmodel.UserViewModel
 
-//@Preview(showBackground = true)
-//@Composable
-//fun RegisterScreen() {
-//    var email by remember { mutableStateOf("") }
-//    var password by remember { mutableStateOf("") }
-//
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .padding(horizontal = 16.dp),
-//        verticalArrangement = Arrangement.SpaceBetween,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ) {
-//        Column(
-//            modifier = Modifier.fillMaxWidth()
-//        ) {
-//            Text(
-//                text = "Введи свої дані, щоб продовжити",
-//                fontSize = 24.sp,
-//                color = Blue,
-//                modifier = Modifier.padding(top = 80.dp, bottom = 40.dp)
-//            )
-//
-//            OutlinedTextField(
-//                value = email,
-//                onValueChange = { email = it },
-//                placeholder = { Text("example@gmail.com", color = GrayMedium) },
-//                singleLine = true,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .border(1.dp, GrayMedium, CircleShape),
-//                shape = CircleShape,
-//            )
-//
-//            Spacer(modifier = Modifier.height(20.dp))
-//
-//            OutlinedTextField(
-//                value = password,
-//                onValueChange = { password = it },
-//                placeholder = { Text("Пароль", color = GrayMedium) },
-//                visualTransformation = PasswordVisualTransformation(),
-//                singleLine = true,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .border(1.dp, GrayMedium, CircleShape),
-//                shape = CircleShape
-//            )
-//        }
-//        Column(
-//            modifier = Modifier.fillMaxWidth(),
-//            horizontalAlignment = Alignment.End
-//        ) {
-//            Button(
-//                onClick = { /* TODO: логіка входу */ },
-//                shape = CircleShape,
-//                modifier = Modifier
-//                    .padding(bottom = 40.dp)
-//                    .size(70.dp),
-//                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Default.ArrowForward,
-//                    contentDescription = "Login",
-//                    tint = Color.White
-//                )
-//            }
-//        }
-//    }
-//}
-
-
-
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun RegisterScreen() {
-    val userViewModel: UserViewModel = viewModel()
+fun RegisterScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val isValid = email.isNotBlank() && password.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -156,26 +85,25 @@ fun RegisterScreen() {
         ) {
             Button(
                 onClick = {
-                    userViewModel.registerUser(
-                        name = null,        // Можно добавить поле ввода имени
-                        gender = null,          // Можно сделать выбор
-                        birthday = null,           // Можно добавить поле ввода
-                        email = email,
-                        password = password
-                    )
+                    if (isValid) {
+                        navController.navigate("register2")
+                    }
                 },
                 shape = CircleShape,
                 modifier = Modifier
                     .padding(bottom = 40.dp)
                     .size(70.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isValid) Color(0xFFFF4545) else Color.LightGray
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Register",
+                    contentDescription = "Login",
                     tint = Color.White
                 )
             }
         }
     }
 }
+
