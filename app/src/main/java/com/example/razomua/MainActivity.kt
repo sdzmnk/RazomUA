@@ -30,18 +30,8 @@ class MainActivity : ComponentActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
 
-            val testUser = UserEntity(
-                id = 1,
-                name = "Sofiia",
-                gender = "FEMALE",
-                birthday = "2000-01-01",
-                email = "sofiia@example.com",
-                password = "12346"
-            )
-            db.userDao().insert(testUser)
-
             val users = repository.getAllUsersLocal()
-            users.forEach { Log.d("DB_TEST", it.toString()) }
+            users.forEach { Log.d("DB_TEST2", it.toString()) }
         }
 
         enableEdgeToEdge()

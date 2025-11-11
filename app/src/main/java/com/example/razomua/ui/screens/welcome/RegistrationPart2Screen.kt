@@ -15,9 +15,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.razomua.viewmodel.RegisterViewModel
 
 @Composable
-fun RegistrationPart2Screen(navController: NavController) {
+fun RegistrationPart2Screen(navController: NavController, registerViewModel: RegisterViewModel) {
     val name = remember { mutableStateOf("") }
     val selectedGender = remember { mutableStateOf<String?>(null) }
     val day = remember { mutableStateOf("") }
@@ -177,7 +178,11 @@ fun RegistrationPart2Screen(navController: NavController) {
             contentAlignment = Alignment.CenterEnd
         ) {
             FloatingActionButton(
-                onClick = { /* TODO: navigate next */ },
+                onClick = {
+                    val birthday = "${day.value}.${month.value}.${year.value}"
+                    registerViewModel.completeRegistration(name.value, selectedGender.value, birthday)
+                    registerViewModel.logAllUsers()
+                    navController.navigate("register3")},
                 containerColor = Color(0xFFE74C3C)
             ) {
                 Icon(Icons.Default.ArrowForward, contentDescription = "Далі", tint = Color.White)

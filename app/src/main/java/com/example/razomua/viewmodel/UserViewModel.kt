@@ -22,46 +22,8 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
     private val _usersFlow = MutableStateFlow<List<User>>(emptyList())
     val usersFlow = _usersFlow.asStateFlow()
 
-    fun addUser(user: User) {
-        _users.add(user)
-        _usersFlow.value = _users.toList()
-    }
-
-    fun removeUser(user: User) {
-        _users.remove(user)
-        _usersFlow.value = _users.toList()
-    }
-
     fun getUserByEmail(email: String): User? {
         return _users.find { it.email == email }
-    }
-
-    fun registerUser( name: String? = null,
-                      gender: String? = null,
-                      birthday: String? = null,
-                      email: String,
-                      password: String)
-    {
-        viewModelScope.launch {
-            // Генерируем ID автоматически, например по размеру списка + 1
-            val newId = (_users.maxOfOrNull { it.id } ?: 0) + 1
-
-            val user = User(
-                id = newId,
-                name = name,
-                gender = gender,
-                birthday = birthday,
-                email = email,
-                password = password
-            )
-
-            // Сохраняем в локальную базу
-            repository.createUser(user) // это suspend, запускаем внутри корутины
-
-            // Обновляем локальный список
-            _users.add(user)
-            _usersFlow.value = _users.toList()
-        }
     }
 
 
