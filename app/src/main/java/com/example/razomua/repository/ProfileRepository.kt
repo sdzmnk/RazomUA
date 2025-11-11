@@ -15,7 +15,7 @@ class ProfileRepository(
 )  {
 
     // Offline-first:
-    suspend fun getProfileLocalFirst(userId: Long): Profile? {
+    suspend fun getProfileLocalFirst(userId: Int): Profile? {
         val localProfile = profileDao.getProfileByUserId(userId)?.toDomain()
         if (localProfile != null) return localProfile
 
@@ -24,7 +24,7 @@ class ProfileRepository(
         return result.getOrNull()
     }
 
-    suspend fun getProfileFromApi(userId: Long): Result<Profile> = withContext(Dispatchers.IO) {
+    suspend fun getProfileFromApi(userId: Int): Result<Profile> = withContext(Dispatchers.IO) {
         try {
             val response = api.getProfile(userId)
             if (response.isSuccessful) {
@@ -51,7 +51,7 @@ class ProfileRepository(
         }
     }
 
-    suspend fun getProfileById(id: Long): Result<Profile> = withContext(Dispatchers.IO) {
+    suspend fun getProfileById(id: Int): Result<Profile> = withContext(Dispatchers.IO) {
         try {
             val response = api.getProfile(id)
             if (response.isSuccessful) {

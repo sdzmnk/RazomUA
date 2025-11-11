@@ -63,12 +63,12 @@ class MainViewModel(
         sendEvent("Ви вийшли з акаунту.")
     }
 
-    fun likeUser(targetUserId: Long) {
+    fun likeUser(targetUserId: Int) {
         val currentUserId = _profile.value?.userId ?: return
         swipeViewModel.addSwipe(currentUserId, targetUserId, SwipeAction.LIKE)
     }
 
-    fun dislikeUser(targetUserId: Long) {
+    fun dislikeUser(targetUserId: Int) {
         val currentUserId = _profile.value?.userId ?: return
         swipeViewModel.addSwipe(currentUserId, targetUserId, SwipeAction.DISLIKE)
     }

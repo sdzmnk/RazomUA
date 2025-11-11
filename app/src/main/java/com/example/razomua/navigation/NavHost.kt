@@ -1,5 +1,7 @@
 package com.example.razomua.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -10,9 +12,11 @@ import com.example.razomua.ui.screens.welcome.ChatScreen
 import com.example.razomua.ui.screens.welcome.DiagramScreen
 import com.example.razomua.ui.screens.welcome.GoogleMapsScreen
 import com.example.razomua.ui.screens.welcome.ProfileScreen
+import com.example.razomua.ui.screens.welcome.RegistrationPart2Screen
 import com.example.razomua.ui.screens.welcome.SwipeScreen
 import com.example.razomua.ui.screens.welcome.WelcomeScreen
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
@@ -21,7 +25,8 @@ fun AppNavHost() {
         composable("login") {
             LoginScreen(navController = navController)
         }
-        composable("register") { RegisterScreen() }
+        composable("register") {
+            RegisterScreen(navController = navController)}
         composable("swipe") {
             SwipeScreen(navController = navController)
         }
@@ -36,6 +41,10 @@ fun AppNavHost() {
         }
         composable("diagram") {
             DiagramScreen(navController = navController)
+        }
+
+        composable("register2") {
+            RegistrationPart2Screen(navController = navController)
         }
     }
 }

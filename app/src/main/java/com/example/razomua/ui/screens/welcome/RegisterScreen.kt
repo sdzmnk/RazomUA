@@ -1,5 +1,7 @@
 package com.example.razomua.ui.screens.register
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -22,14 +24,18 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.example.razomua.ui.theme.Blue
 import com.example.razomua.ui.theme.GrayMedium
+import com.example.razomua.viewmodel.UserViewModel
 
-@Preview(showBackground = true)
 @Composable
-fun RegisterScreen() {
+fun RegisterScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val isValid = email.isNotBlank() && password.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -78,12 +84,18 @@ fun RegisterScreen() {
             horizontalAlignment = Alignment.End
         ) {
             Button(
-                onClick = { /* TODO: логіка входу */ },
+                onClick = {
+                    if (isValid) {
+                        navController.navigate("register2")
+                    }
+                },
                 shape = CircleShape,
                 modifier = Modifier
                     .padding(bottom = 40.dp)
                     .size(70.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isValid) Color(0xFFFF4545) else Color.LightGray
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.ArrowForward,
@@ -94,3 +106,4 @@ fun RegisterScreen() {
         }
     }
 }
+
