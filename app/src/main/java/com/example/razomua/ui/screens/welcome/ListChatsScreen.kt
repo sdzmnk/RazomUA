@@ -110,19 +110,6 @@ fun ListChatsScreen(
                     fontWeight = FontWeight.Medium,
                     color = Color.Black
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Box(
-                    modifier = Modifier
-                        .size(12.dp)
-                        .clip(CircleShape)
-                        .background(if (isConnected) Color(0xFF4CAF50) else Color.Gray)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = if (isConnected) "онлайн" else "офлайн",
-                    fontSize = 14.sp,
-                    color = if (isConnected) Color(0xFF4CAF50) else Color.Gray
-                )
             }
 
             LazyColumn {
