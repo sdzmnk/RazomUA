@@ -6,6 +6,11 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.razomua.navigation.AppNavHost
+import com.example.razomua.ui.screens.welcome.WelcomeScreen
+import com.example.razomua.ui.theme.RazomUATheme
+import com.example.websocketchatapp.WebSocketViewModel
 import androidx.annotation.RequiresApi
 import androidx.room.Room
 import com.example.razomua.data.local.AppDatabase
@@ -35,9 +40,12 @@ class MainActivity : ComponentActivity() {
         }
 
         enableEdgeToEdge()
+        val viewModel = WebSocketViewModel()
         setContent {
             RazomUATheme {
-                com.example.razomua.navigation.AppNavHost()
+                val webSocketViewModel: WebSocketViewModel = viewModel()
+                AppNavHost(webSocketViewModel = webSocketViewModel)
+//                com.example.razomua.navigation.AppNavHost()
             }
         }
     }

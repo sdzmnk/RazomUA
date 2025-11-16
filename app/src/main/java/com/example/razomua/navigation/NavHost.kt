@@ -16,12 +16,15 @@ import com.example.razomua.ui.screens.welcome.PreferencesSettingsScreen
 import com.example.razomua.ui.screens.welcome.ProfileScreen
 import com.example.razomua.ui.screens.welcome.RegistrationPart2Screen
 import com.example.razomua.ui.screens.welcome.SwipeScreen
+import com.example.razomua.ui.screens.welcome.ChatScreen
+import com.example.razomua.ui.screens.welcome.ListChatsScreen
 import com.example.razomua.ui.screens.welcome.WelcomeScreen
+import com.example.websocketchatapp.WebSocketViewModel
 import com.example.razomua.viewmodel.RegisterViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavHost() {
+fun AppNavHost( webSocketViewModel: WebSocketViewModel) {
     val navController = rememberNavController()
     val registerViewModel: RegisterViewModel = viewModel()
     NavHost(navController = navController, startDestination = "welcome") {
@@ -34,8 +37,8 @@ fun AppNavHost() {
         composable("swipe") {
             SwipeScreen(navController = navController)
         }
-        composable("chat") {
-            ChatScreen(navController = navController)
+        composable("chats") {
+            ListChatsScreen(navController = navController, viewModel = webSocketViewModel)
         }
         composable("profile") {
             ProfileScreen(navController = navController)
@@ -46,6 +49,10 @@ fun AppNavHost() {
         composable("diagram") {
             DiagramScreen(navController = navController)
         }
+        composable("chat") { backStackEntry ->
+            ChatScreen(navController = navController, viewModel = webSocketViewModel)
+        }
+
 
         composable("register2") {
             RegistrationPart2Screen(navController = navController, registerViewModel = registerViewModel)
