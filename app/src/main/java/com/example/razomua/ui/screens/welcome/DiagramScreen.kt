@@ -54,7 +54,7 @@ fun DiagramScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { navController.navigate("chat") }) {
+                    IconButton(onClick = { navController.navigate("chats") }) {
                         Icon(
                             painter = painterResource(id = R.drawable.chats),
                             contentDescription = "Chats",

@@ -24,7 +24,6 @@ class ChatViewModel : ViewModel() {
     val users = _users.asStateFlow()
 
     init {
-        // Імітуємо зміну статусу "онлайн / офлайн"
         viewModelScope.launch {
             while (true) {
                 delay(4000)
@@ -44,15 +43,15 @@ class ChatViewModel : ViewModel() {
 
         webSocket = client.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
-                println("✅ Підключено до WebSocket")
+                println("Підключено до WebSocket")
             }
 
             override fun onMessage(webSocket: WebSocket, text: String) {
-                println("📩 Нове повідомлення: $text")
+                println("Нове повідомлення: $text")
             }
 
             override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                println("❌ Помилка WebSocket: ${t.message}")
+                println("Помилка WebSocket: ${t.message}")
             }
         })
     }

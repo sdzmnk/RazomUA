@@ -11,10 +11,13 @@ import com.example.razomua.ui.screens.welcome.DiagramScreen
 import com.example.razomua.ui.screens.welcome.GoogleMapsScreen
 import com.example.razomua.ui.screens.welcome.ProfileScreen
 import com.example.razomua.ui.screens.welcome.SwipeScreen
+import com.example.razomua.ui.screens.welcome.ChatScreen
+import com.example.razomua.ui.screens.welcome.ListChatsScreen
 import com.example.razomua.ui.screens.welcome.WelcomeScreen
+import com.example.websocketchatapp.WebSocketViewModel
 
 @Composable
-fun AppNavHost() {
+fun AppNavHost( webSocketViewModel: WebSocketViewModel) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "welcome") {
         composable("welcome") { WelcomeScreen(navController) }
@@ -25,8 +28,8 @@ fun AppNavHost() {
         composable("swipe") {
             SwipeScreen(navController = navController)
         }
-        composable("chat") {
-            ChatScreen(navController = navController)
+        composable("chats") {
+            ListChatsScreen(navController = navController, viewModel = webSocketViewModel)
         }
         composable("profile") {
             ProfileScreen(navController = navController)
@@ -37,5 +40,9 @@ fun AppNavHost() {
         composable("diagram") {
             DiagramScreen(navController = navController)
         }
+        composable("chat") { backStackEntry ->
+            ChatScreen(navController = navController, viewModel = webSocketViewModel)
+        }
+
     }
 }
