@@ -9,7 +9,7 @@ interface ProfileDao {
     suspend fun insert(profile: ProfileEntity)
 
     @Query("SELECT * FROM profiles WHERE userId = :userId")
-    suspend fun getProfileByUserId(userId: Long): ProfileEntity?
+    suspend fun getProfileByUserId(userId: Int): ProfileEntity?
 
     @Query("SELECT * FROM profiles")
     suspend fun getAllProfiles(): List<ProfileEntity>

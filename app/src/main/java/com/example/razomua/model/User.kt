@@ -6,11 +6,12 @@ enum class Gender {
 }
 @Serializable
 data class User(
-    val id: Long,
-    val name: String,
-    val gender: String,
-    val birthday: String?,
-    val email: String
+    val id: Int,
+    val name: String? = null,
+    val gender: String? = null,
+    val birthday: String? = null,
+    val email: String,
+    val password: String
 )
 
 

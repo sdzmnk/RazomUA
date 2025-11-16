@@ -13,7 +13,7 @@ interface ProfileApiService {
     suspend fun getAllProfiles(): Response<List<Profile>>
 
     @GET("profiles/{id}")
-    suspend fun getProfile(@Path("id") id: Long): Response<Profile>
+    suspend fun getProfile(@Path("id") id: Int): Response<Profile>
 
     @POST("profiles")
     suspend fun createProfile(@Body profile: Profile): Response<Profile>

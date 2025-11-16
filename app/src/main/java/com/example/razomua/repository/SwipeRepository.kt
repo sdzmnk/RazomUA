@@ -15,7 +15,7 @@ class SwipeRepository(
 ) {
 
     // Offline-first: спершу локальна база, потім API
-    suspend fun getUserSwipesLocalFirst(userId: Long): List<Swipe> {
+    suspend fun getUserSwipesLocalFirst(userId: Int): List<Swipe> {
 
         val localSwipes = swipeDao.getSwipesFromUser(userId).map { it.toDomain() }
         if (localSwipes.isNotEmpty()) return localSwipes
@@ -27,7 +27,7 @@ class SwipeRepository(
     }
 
     // API
-    suspend fun getUserSwipesFromApi(userId: Long): Result<List<Swipe>> = withContext(Dispatchers.IO) {
+    suspend fun getUserSwipesFromApi(userId: Int): Result<List<Swipe>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getUserSwipes(userId)
             if (response.isSuccessful) {
@@ -54,7 +54,7 @@ class SwipeRepository(
         }
     }
 
-    suspend fun getUserSwipes(id: Long): Result<List<Swipe>> = withContext(Dispatchers.IO) {
+    suspend fun getUserSwipes(id: Int): Result<List<Swipe>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getUserSwipes(id)
             if (response.isSuccessful) {
@@ -67,7 +67,7 @@ class SwipeRepository(
         }
     }
 
-    suspend fun getMatches(userId: Long): Result<List<Swipe>> = withContext(Dispatchers.IO) {
+    suspend fun getMatches(userId: Int): Result<List<Swipe>> = withContext(Dispatchers.IO) {
         try {
             val response = api.getMatches(userId)
             if (response.isSuccessful) {
@@ -81,7 +81,7 @@ class SwipeRepository(
     }
 
     // Оновлення локальної бази через сервер (для Worker)
-    suspend fun refreshSwipesFromServer(userId: Long) {
+    suspend fun refreshSwipesFromServer(userId: Int) {
         val result = getUserSwipesFromApi(userId)
         result.getOrNull()?.forEach { swipeDao.insert(it.toEntity()) }
     }

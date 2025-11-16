@@ -11,11 +11,11 @@ interface UserApiService {
 
 
     @GET("users/{id}")
-    suspend fun getUser(@Path("id") id: Long): Response<User>
+    suspend fun getUser(@Path("id") id: Int): Response<User>
 
     @POST("users")
     suspend fun createUser(@Body user: User): Response<User>
 
     @PUT("users/{id}")
-    suspend fun updateUser(@Path("id") id: Long, @Body user: User): Response<User>
+    suspend fun updateUser(@Path("id") id: Int, @Body user: User): Response<User>
 }

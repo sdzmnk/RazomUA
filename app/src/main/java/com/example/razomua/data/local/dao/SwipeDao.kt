@@ -9,7 +9,7 @@ interface SwipeDao {
     suspend fun insert(swipe: SwipeEntity)
 
     @Query("SELECT * FROM swipes WHERE fromUserId = :fromUserId")
-    suspend fun getSwipesFromUser(fromUserId: Long): List<SwipeEntity>
+    suspend fun getSwipesFromUser(fromUserId: Int): List<SwipeEntity>
 
     @Query("SELECT * FROM swipes")
     suspend fun getAllSwipes(): List<SwipeEntity>

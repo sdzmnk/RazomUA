@@ -1,16 +1,20 @@
 package com.example.razomua.viewmodel
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import com.example.razomua.model.User
+import com.example.razomua.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 @RequiresApi(Build.VERSION_CODES.O)
-class UserViewModel : ViewModel() {
+class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
     private val _users: SnapshotStateList<User> = mutableStateListOf()
     val users: List<User> get() = _users
@@ -18,19 +22,20 @@ class UserViewModel : ViewModel() {
     private val _usersFlow = MutableStateFlow<List<User>>(emptyList())
     val usersFlow = _usersFlow.asStateFlow()
 
-    fun addUser(user: User) {
-        _users.add(user)
-        _usersFlow.value = _users.toList()
-    }
-
-    fun removeUser(user: User) {
-        _users.remove(user)
-        _usersFlow.value = _users.toList()
-    }
-
     fun getUserByEmail(email: String): User? {
         return _users.find { it.email == email }
     }
+
+
+    fun printAllUsers() {
+        viewModelScope.launch {
+            val users = repository.getAllUsersLocal()
+            users.forEach {
+                Log.d("DB_TEST", it.toString())
+            }
+        }
+    }
+
 
     init {
         _usersFlow.value = _users.toList()
