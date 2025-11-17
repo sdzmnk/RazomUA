@@ -159,7 +159,7 @@ fun ProfileScreen(navController: NavController) {
                     .fillMaxWidth()
                     .height(50.dp)
             ) {
-                Text(text = "Хто поруч", color = Color.White, fontFamily = Montserrat)
+                Text(text = "Хто поруч: Google Maps", color = Color.White, fontFamily = Montserrat)
             }
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -183,6 +183,19 @@ fun ProfileScreen(navController: NavController) {
                         modifier = Modifier.size(250.dp)
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(
+                onClick = { navController.navigate("nearby") },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252)),
+                shape = RoundedCornerShape(50),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Text(text = "Хто поруч: сканування Bluetooth", color = Color.White, fontFamily = Montserrat)
             }
         }
     }

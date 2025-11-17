@@ -18,6 +18,7 @@ import com.example.razomua.ui.screens.welcome.RegistrationPart2Screen
 import com.example.razomua.ui.screens.welcome.SwipeScreen
 import com.example.razomua.ui.screens.welcome.ChatScreen
 import com.example.razomua.ui.screens.welcome.ListChatsScreen
+import com.example.razomua.ui.screens.welcome.NearbyUsersScreen
 import com.example.razomua.ui.screens.welcome.WelcomeScreen
 import com.example.websocketchatapp.WebSocketViewModel
 import com.example.razomua.viewmodel.RegisterViewModel
@@ -61,5 +62,15 @@ fun AppNavHost( webSocketViewModel: WebSocketViewModel) {
         composable("register3") {
             PreferencesSettingsScreen(navController = navController)
         }
+        composable("nearby") {
+            NearbyUsersScreen(
+                navController = navController,
+                onUserClick = { userId ->
+                    navController.navigate("profile/$userId")
+                }
+            )
+        }
+
+
     }
 }
