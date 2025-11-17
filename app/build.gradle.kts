@@ -78,6 +78,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
     implementation("com.google.android.libraries.places:places:3.5.0")
     implementation("androidx.room:room-runtime:2.6.1")
+    implementation("com.google.zxing:core:3.5.2")
 
 
 }
