@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+//    implementation(libs.firebase.database.ktx)
     ksp(libs.androidx.room.compiler)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

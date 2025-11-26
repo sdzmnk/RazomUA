@@ -1,6 +1,6 @@
 package com.example.razomua.ui.screens.welcome
 
-import android.app.Dialog
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,12 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.example.razomua.R
+import com.example.razomua.ui.nfc.NfcWriteActivity
 import com.example.razomua.ui.theme.Montserrat
 
 @Composable
@@ -30,6 +32,9 @@ fun ProfileScreen(navController: NavController) {
     val qrBitmap by remember {
         mutableStateOf(generateQRCode("https://razomua.com/profile/$testUserId"))
     }
+
+    val context = LocalContext.current // Для запуску NFC активності
+
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -51,7 +56,6 @@ fun ProfileScreen(navController: NavController) {
                             modifier = Modifier.size(28.dp)
                         )
                     }
-
                     IconButton(onClick = { navController.navigate("swipe") }) {
                         Icon(
                             painter = painterResource(id = R.drawable.cards),
@@ -60,7 +64,6 @@ fun ProfileScreen(navController: NavController) {
                             modifier = Modifier.size(28.dp)
                         )
                     }
-
                     IconButton(onClick = { navController.navigate("profile") }) {
                         Icon(
                             painter = painterResource(id = R.drawable.user),
@@ -86,21 +89,15 @@ fun ProfileScreen(navController: NavController) {
                 modifier = Modifier
                     .size(100.dp)
                     .background(Color.Gray, shape = RoundedCornerShape(50.dp))
-            ) {
-                // Можна вставити Image(painter = ..., contentDescription = ...)
-            }
+            )
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Ім'я та вік
             Text(text = "Дар'я, 23", fontSize = 24.sp, fontFamily = Montserrat, color = Color.Black)
-
-            // Місто
             Text(text = "Київ", fontSize = 14.sp, color = Color.Gray)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Що шукає
             Text(text = "Шукаю", fontFamily = Montserrat, color = Color.Blue)
             Surface(
                 color = Color(0xFFE0E0E0),
@@ -116,9 +113,7 @@ fun ProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Більше про мене
             Text(text = "Більше про мене", fontFamily = Montserrat, color = Color.Blue)
-
             Row(modifier = Modifier.padding(top = 4.dp)) {
                 listOf("Плавання", "Вивчення мов").forEach { tag ->
                     Surface(
@@ -137,7 +132,6 @@ fun ProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            // Кнопки
             Button(
                 onClick = { navController.navigate("diagram") },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252)),
@@ -175,6 +169,23 @@ fun ProfileScreen(navController: NavController) {
                 Text(text = "Згенерувати QR Code", color = Color.White, fontFamily = Montserrat)
             }
 
+            // 🔥 Нова кнопка для NFC
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                onClick = {
+                    val intent = Intent(context, NfcWriteActivity::class.java)
+                    intent.putExtra("PROFILE_ID", testUserId)
+                    context.startActivity(intent)
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFF5252)),
+                shape = RoundedCornerShape(50),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            ) {
+                Text(text = "Поділитися профілем через NFC", color = Color.White, fontFamily = Montserrat)
+            }
+
             if (showQR) {
                 Dialog(onDismissRequest = { showQR = false }) {
                     Image(
@@ -200,4 +211,5 @@ fun ProfileScreen(navController: NavController) {
         }
     }
 }
+
 
