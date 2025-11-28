@@ -24,7 +24,6 @@ class NfcWriteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // ------------ ГОЛОВНА ПЕРЕВІРКА NFC перед setContentView ------------
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
 
         if (nfcAdapter == null) {
@@ -36,7 +35,6 @@ class NfcWriteActivity : AppCompatActivity() {
             finish()
             return
         }
-        // --------------------------------------------------------------------
 
         setContentView(R.layout.activity_nfc_write)
 

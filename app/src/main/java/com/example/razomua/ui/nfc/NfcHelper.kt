@@ -11,13 +11,11 @@ class NfcHelper(private val activity: Activity) {
 
     private val nfcAdapter: NfcAdapter? = NfcAdapter.getDefaultAdapter(activity)
 
-    /** Створення NDEF-повідомлення */
     fun createNdefMessage(text: String): NdefMessage {
         val record = NdefRecord.createTextRecord("en", text)
         return NdefMessage(arrayOf(record))
     }
 
-    /** Запис у NFC-мітку */
     fun writeToTag(message: NdefMessage, tag: Tag): Boolean {
         val ndef = Ndef.get(tag)
         return if (ndef != null) {
@@ -37,7 +35,6 @@ class NfcHelper(private val activity: Activity) {
         }
     }
 
-    /** Зчитування профілю */
     fun readProfileId(intent: Intent): String? {
         val rawMsgs =
             intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES)
