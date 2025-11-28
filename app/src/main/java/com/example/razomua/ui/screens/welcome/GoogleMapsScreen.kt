@@ -33,7 +33,7 @@ import kotlinx.coroutines.tasks.await
 @Composable
 fun GoogleMapsScreen(navController: NavController) {
     val context = LocalContext.current
-    val defaultLocation = LatLng(50.4501, 30.5234) // Київ
+    val defaultLocation = LatLng(50.4501, 30.5234)
 
     var userLocation by remember { mutableStateOf<LatLng?>(null) }
     var permissionGranted by remember { mutableStateOf(false) }
@@ -41,7 +41,6 @@ fun GoogleMapsScreen(navController: NavController) {
 
     val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
 
-    // ✅ Ініціалізація Places API
     if (!Places.isInitialized()) {
         Places.initialize(context, context.getString(R.string.google_maps_key))
     }
@@ -62,7 +61,6 @@ fun GoogleMapsScreen(navController: NavController) {
         }
     }
 
-    // 🟡 Запит дозволу при відкритті екрана
     LaunchedEffect(Unit) {
         permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -72,7 +70,6 @@ fun GoogleMapsScreen(navController: NavController) {
         }
     }
 
-    // 🟢 Завантажуємо місця поруч, коли є локація
     LaunchedEffect(userLocation, permissionGranted) {
         if (permissionGranted && userLocation != null) {
             try {
@@ -146,14 +143,11 @@ fun GoogleMapsScreen(navController: NavController) {
                     cameraPositionState = cameraPositionState,
                     properties = MapProperties(isMyLocationEnabled = permissionGranted)
                 ) {
-                    // 🔵 Маркер користувача
                     Marker(
                         state = MarkerState(position = userLocation!!),
                         title = "Ти тут ❤️",
                         snippet = "Твоє поточне місцезнаходження"
                     )
-
-                    // 🔴 Маркери місць поруч
                     nearbyPlaces.forEach { place ->
                         place.latLng?.let { latLng ->
                             Marker(
