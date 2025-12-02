@@ -34,7 +34,8 @@ fun AppNavHost( webSocketViewModel: WebSocketViewModel) {
             LoginScreen(navController = navController)
         }
         composable("register") {
-            RegisterScreen(navController = navController, registerViewModel = registerViewModel)}
+            RegisterScreen(navController = navController)
+        }
         composable("swipe") {
             SwipeScreen(navController = navController)
         }

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "700608856340",
+    "firebase_url": "https://razomua-b2573-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "razomua-b2573",
+    "storage_bucket": "razomua-b2573.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700608856340:android:0d8af6e6ec0b8cd1e9c201",
+        "android_client_info": {
+          "package_name": "com.example.razomua"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVh6iuK3zj_EK893aUt57K4oHGEK8AIHo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

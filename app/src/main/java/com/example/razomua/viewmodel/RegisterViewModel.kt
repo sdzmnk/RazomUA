@@ -9,81 +9,121 @@ import com.example.razomua.data.local.entity.UserEntity
 import com.example.razomua.model.User
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
+
+//class RegisterViewModel(application: Application) : AndroidViewModel(application) {
+//
+//    // DAO для роботи з Room
+//    private val userDao = DatabaseProvider.getDatabase(application).userDao()
+//
+//    // Список користувачів для UI
+//    private val _users = mutableStateListOf<User>()
+//    val users: List<User> get() = _users
+//
+//    // Тимчасове збереження даних під час реєстрації (між екранами)
+//    var tempUser: User? = null
+//
+//    /** Початок реєстрації: зберігаємо email та пароль тимчасово */
+//    fun startRegistration(email: String, password: String) {
+//        tempUser = User(
+//            id = 0, // Room згенерує id
+//            email = email,
+//            password = password
+//        )
+//    }
+//
+//    /** Завершення реєстрації: додаємо ім'я, гендер, день народження і зберігаємо в Room */
+//    fun completeRegistration(name: String, gender: String?, birthday: String?) {
+//        tempUser?.let { user ->
+//            val fullUser = user.copy(
+//                name = name,
+//                gender = gender,
+//                birthday = birthday
+//            )
+//
+//            // Зберігаємо в Room
+//            viewModelScope.launch {
+//                val userEntity = UserEntity(
+//                    id = 0, // Room автоматично згенерує id
+//                    name = fullUser.name,
+//                    gender = fullUser.gender,
+//                    birthday = fullUser.birthday,
+//                    email = fullUser.email,
+//                    password = fullUser.password
+//                )
+//                userDao.insert(userEntity)
+//
+//                // Оновлюємо локальний список користувачів для UI
+//                loadAllUsers()
+//            }
+//
+//            tempUser = null
+//        }
+//    }
+//
+//    /** Завантаження всіх користувачів із бази даних */
+//    fun loadAllUsers() {
+//        viewModelScope.launch {
+//            val allUsers = userDao.getAllUsers()
+//            _users.clear()
+//            _users.addAll(allUsers.map { userEntity ->
+//                User(
+//                    id = userEntity.id,
+//                    name = userEntity.name,
+//                    gender = userEntity.gender,
+//                    birthday = userEntity.birthday,
+//                    email = userEntity.email,
+//                    password = userEntity.password
+//                )
+//            })
+//        }
+//    }
+//
+//    fun logAllUsers() {
+//        viewModelScope.launch {
+//            val users = userDao.getAllUsers()
+//            users.forEach { Log.d("DB_USERS", it.toString()) }
+//        }
+//    }
+//
+//
+//}
+
 
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
 
-    // DAO для роботи з Room
+    private val auth = FirebaseAuth.getInstance()
     private val userDao = DatabaseProvider.getDatabase(application).userDao()
 
-    // Список користувачів для UI
-    private val _users = mutableStateListOf<User>()
-    val users: List<User> get() = _users
+    private val _registerState = MutableLiveData<Boolean>()
+    val registerState: LiveData<Boolean> = _registerState
 
-    // Тимчасове збереження даних під час реєстрації (між екранами)
-    var tempUser: User? = null
+    private val _error = MutableLiveData<String>()
+    val error: LiveData<String> = _error
 
-    /** Початок реєстрації: зберігаємо email та пароль тимчасово */
-    fun startRegistration(email: String, password: String) {
-        tempUser = User(
-            id = 0, // Room згенерує id
-            email = email,
-            password = password
-        )
-    }
+    fun register(email: String, password: String, name: String) {
 
-    /** Завершення реєстрації: додаємо ім'я, гендер, день народження і зберігаємо в Room */
-    fun completeRegistration(name: String, gender: String?, birthday: String?) {
-        tempUser?.let { user ->
-            val fullUser = user.copy(
-                name = name,
-                gender = gender,
-                birthday = birthday
-            )
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
 
-            // Зберігаємо в Room
-            viewModelScope.launch {
-                val userEntity = UserEntity(
-                    id = 0, // Room автоматично згенерує id
-                    name = fullUser.name,
-                    gender = fullUser.gender,
-                    birthday = fullUser.birthday,
-                    email = fullUser.email,
-                    password = fullUser.password
-                )
-                userDao.insert(userEntity)
+                viewModelScope.launch {
+                    userDao.insert(
+                        UserEntity(
+                            id = 0,
+                            email = email,
+                            password = password,
+                            name = name,
+                        )
+                    )
+                }
 
-                // Оновлюємо локальний список користувачів для UI
-                loadAllUsers()
+                _registerState.value = true
             }
-
-            tempUser = null
-        }
+            .addOnFailureListener {
+                _error.value = it.localizedMessage
+            }
     }
-
-    /** Завантаження всіх користувачів із бази даних */
-    fun loadAllUsers() {
-        viewModelScope.launch {
-            val allUsers = userDao.getAllUsers()
-            _users.clear()
-            _users.addAll(allUsers.map { userEntity ->
-                User(
-                    id = userEntity.id,
-                    name = userEntity.name,
-                    gender = userEntity.gender,
-                    birthday = userEntity.birthday,
-                    email = userEntity.email,
-                    password = userEntity.password
-                )
-            })
-        }
-    }
-
-    fun logAllUsers() {
-        viewModelScope.launch {
-            val users = userDao.getAllUsers()
-            users.forEach { Log.d("DB_USERS", it.toString()) }
-        }
-    }
-
-
 }
+

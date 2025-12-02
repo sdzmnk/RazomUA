@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -80,6 +81,7 @@ dependencies {
     implementation("com.google.android.libraries.places:places:3.5.0")
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("com.google.zxing:core:3.5.2")
-
-
+    implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.google.firebase:firebase-auth")
 }

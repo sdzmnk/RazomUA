@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.razomua.data.local.DatabaseProvider
 import com.example.razomua.repository.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
     private var isDarkTheme by mutableStateOf(false)
@@ -49,6 +50,18 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user != null) {
+            Log.d("AUTH", "User logged in: ${user.email}")
+        } else {
+            Log.d("AUTH", "No user logged in")
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
