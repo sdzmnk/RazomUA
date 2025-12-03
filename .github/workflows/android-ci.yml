@@ -40,6 +40,9 @@ jobs:
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest
 
+      - name: Create AVD directory
+        run: mkdir -p $HOME/.android/avd
+
       - name: Set up Android Emulator and run Instrumented Tests
         uses: reactivecircus/android-emulator-runner@v2.27.0
         with:
