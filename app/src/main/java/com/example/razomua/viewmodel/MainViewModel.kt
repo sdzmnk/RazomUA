@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MainViewModel(
-    private val userViewModel: UserViewModel,
-    private val swipeViewModel: SwipeViewModel
+    private val userViewModel: com.example.razomua.viewmodel.UserViewModel,
+    private val swipeViewModel: com.example.razomua.viewmodel.SwipeViewModel
 ) : ViewModel() {
 
     private val _profile = MutableStateFlow<Profile?>(null)

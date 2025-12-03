@@ -131,6 +131,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -192,7 +193,8 @@ fun LoginScreen(
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, GrayMedium, CircleShape),
+                        .border(1.dp, GrayMedium, CircleShape)
+                        .testTag("emailField"),
                     shape = CircleShape,
                 )
 
@@ -206,7 +208,8 @@ fun LoginScreen(
                     singleLine = true,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.dp, GrayMedium, CircleShape),
+                        .border(1.dp, GrayMedium, CircleShape)
+                        .testTag("passwordField"),
                     shape = CircleShape
                 )
             }
@@ -220,7 +223,8 @@ fun LoginScreen(
                     shape = CircleShape,
                     modifier = Modifier
                         .padding(bottom = 40.dp)
-                        .size(70.dp),
+                        .size(70.dp)
+                        .testTag("loginButton"),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
                 ) {
                     Icon(

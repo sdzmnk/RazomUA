@@ -115,7 +115,6 @@ class UserRepository(
 
     // Offline-first: сначала локальная база
     suspend fun getUserLocalFirst(id: Int): User? {
-        // пробуем взять из базы
         userDao.getUserById(id)?.toDomain()?.let { return it }
 
         // если нет — с API
