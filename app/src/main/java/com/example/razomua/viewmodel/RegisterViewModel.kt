@@ -105,9 +105,11 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
     fun register(email: String, password: String, name: String) {
 
+        Log.d("REGISTER", "User tries to register: $email")
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-
+                Log.d("REGISTER", "Registration successful: $email")
                 viewModelScope.launch {
                     userDao.insert(
                         UserEntity(
@@ -121,8 +123,9 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
                 _registerState.value = true
             }
-            .addOnFailureListener {
-                _error.value = it.localizedMessage
+            .addOnFailureListener { exception ->
+                Log.e("REGISTER", "Registration failed: ${exception.localizedMessage}")
+                _error.value = exception.localizedMessage
             }
     }
 }

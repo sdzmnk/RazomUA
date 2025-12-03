@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -93,6 +94,7 @@ implementation(libs.androidx.navigation.testing)
     implementation("com.google.zxing:core:3.5.2")
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
     implementation ("com.google.firebase:firebase-auth")
     androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.1") // опціонально
     androidTestImplementation ("androidx.test.ext:junit:1.1.5")
