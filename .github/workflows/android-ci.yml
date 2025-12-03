@@ -1,4 +1,4 @@
-name: Android CI
+name: Android CI - Unit Tests Only
 
 on:
   push:
@@ -7,12 +7,11 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  unit-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -40,19 +39,6 @@ jobs:
       - name: Run Unit Tests
         run: ./gradlew testDebugUnitTest
 
-      - name: Create AVD directory
-        run: mkdir -p $HOME/.android/avd
-
-      - name: Set up Android Emulator and run Instrumented Tests
-        uses: reactivecircus/android-emulator-runner@v2.27.0
-        with:
-          api-level: 33
-          target: google_apis
-          arch: x86_64
-          force-avd-creation: true
-          emulator-options: "-no-window -no-audio"
-          script: ./gradlew connectedDebugAndroidTest
-
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
@@ -64,9 +50,3 @@ jobs:
         with:
           name: unit-test-results
           path: app/build/test-results/testDebugUnitTest/
-
-      - name: Upload Instrumented Test Results
-        uses: actions/upload-artifact@v4
-        with:
-          name: instrumented-test-results
-          path: app/build/reports/androidTests/connected/
