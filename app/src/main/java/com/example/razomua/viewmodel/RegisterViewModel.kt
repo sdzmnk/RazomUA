@@ -1,17 +1,17 @@
-//package com.example.razomua.viewmodel
-//
-//import android.app.Application
-//import android.util.Log
-//import androidx.lifecycle.AndroidViewModel
-//import androidx.lifecycle.viewModelScope
-//import com.example.razomua.data.local.DatabaseProvider
-//import com.example.razomua.data.local.entity.UserEntity
-//import com.example.razomua.model.User
-//import kotlinx.coroutines.launch
-//import androidx.compose.runtime.mutableStateListOf
-//import androidx.lifecycle.LiveData
-//import androidx.lifecycle.MutableLiveData
-//import com.google.firebase.auth.FirebaseAuth
+package com.example.razomua.viewmodel
+
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.razomua.data.local.DatabaseProvider
+import com.example.razomua.data.local.entity.UserEntity
+import com.example.razomua.model.User
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
 
 //class RegisterViewModel(application: Application) : AndroidViewModel(application) {
 //
@@ -92,60 +92,10 @@
 //}
 
 
-//class RegisterViewModel(application: Application) : AndroidViewModel(application) {
-//
-//    private val auth = FirebaseAuth.getInstance()
-//    private val userDao = DatabaseProvider.getDatabase(application).userDao()
-//
-//    private val _registerState = MutableLiveData<Boolean>()
-//    val registerState: LiveData<Boolean> = _registerState
-//
-//    private val _error = MutableLiveData<String>()
-//    val error: LiveData<String> = _error
-//
-//    fun register(email: String, password: String, name: String) {
-//
-//        auth.createUserWithEmailAndPassword(email, password)
-//            .addOnSuccessListener {
-//
-//                viewModelScope.launch {
-//                    userDao.insert(
-//                        UserEntity(
-//                            id = 0,
-//                            email = email,
-//                            password = password,
-//                            name = name,
-//                        )
-//                    )
-//                }
-//
-//                _registerState.value = true
-//            }
-//            .addOnFailureListener {
-//                _error.value = it.localizedMessage
-//            }
-//    }
-//}
-
-package com.example.razomua.viewmodel
-
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.razomua.data.local.DatabaseProvider
-import com.example.razomua.data.local.entity.UserEntity
-import com.example.razomua.repository.FirebaseChatRepository // ДОДАТИ ІМПОРТ
-import kotlinx.coroutines.launch
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.firebase.auth.FirebaseAuth
-
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
 
     private val auth = FirebaseAuth.getInstance()
     private val userDao = DatabaseProvider.getDatabase(application).userDao()
-    private val chatRepository = FirebaseChatRepository() // ДОДАТИ
 
     private val _registerState = MutableLiveData<Boolean>()
     val registerState: LiveData<Boolean> = _registerState
@@ -156,20 +106,9 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     fun register(email: String, password: String, name: String) {
 
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { authResult ->
-
-                // Оновити displayName користувача в Firebase Auth
-                val user = authResult.user
-                user?.let {
-                    val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
-                        .setDisplayName(name)
-                        .build()
-
-                    it.updateProfile(profileUpdates)
-                }
+            .addOnSuccessListener {
 
                 viewModelScope.launch {
-                    // Зберегти в Room (локально)
                     userDao.insert(
                         UserEntity(
                             id = 0,
@@ -178,19 +117,13 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                             name = name,
                         )
                     )
-
-                    // ДОДАТИ: Ініціалізувати користувача в Firebase Realtime Database
-                    chatRepository.initializeCurrentUser().onSuccess {
-                        Log.d("RegisterViewModel", "User initialized in Firebase Database")
-                        _registerState.postValue(true)
-                    }.onFailure { error ->
-                        Log.e("RegisterViewModel", "Failed to initialize user", error)
-                        _error.postValue("Помилка ініціалізації: ${error.localizedMessage}")
-                    }
                 }
+
+                _registerState.value = true
             }
             .addOnFailureListener {
                 _error.value = it.localizedMessage
             }
     }
 }
+

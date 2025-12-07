@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,10 @@ fun DiagramScreen(navController: NavController) {
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(onClick = { navController.navigate("chats") }) {
+                    IconButton(
+                        onClick = { navController.navigate("chats") },
+                        modifier = Modifier.testTag("ChatsButton")
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.chats),
                             contentDescription = "Chats",
@@ -63,7 +67,10 @@ fun DiagramScreen(navController: NavController) {
                         )
                     }
 
-                    IconButton(onClick = { navController.navigate("swipe") }) {
+                    IconButton(
+                        onClick = { navController.navigate("swipe") },
+                        modifier = Modifier.testTag("SwipesButton")
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.cards),
                             contentDescription = "Swipes",
@@ -72,7 +79,10 @@ fun DiagramScreen(navController: NavController) {
                         )
                     }
 
-                    IconButton(onClick = { navController.navigate("profile") }) {
+                    IconButton(
+                        onClick = { navController.navigate("profile") },
+                        modifier = Modifier.testTag("ProfileButton")
+                    ) {
                         Icon(
                             painter = painterResource(id = R.drawable.user),
                             contentDescription = "Profile",
@@ -150,6 +160,7 @@ fun UserStatsDiagram() {
         modifier = Modifier
             .size(220.dp)
             .padding(16.dp)
+            .testTag("UserStatsDiagram") // <-- додаємо testTag
     ) {
         var startAngle = -90f
         data.forEach { (percent, color) ->
