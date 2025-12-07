@@ -20,12 +20,13 @@ import com.example.razomua.ui.screens.welcome.ChatScreen
 import com.example.razomua.ui.screens.welcome.ListChatsScreen
 import com.example.razomua.ui.screens.welcome.NearbyUsersScreen
 import com.example.razomua.ui.screens.welcome.WelcomeScreen
-import com.example.websocketchatapp.WebSocketViewModel
+import com.example.razomua.viewmodel.ChatViewModel
+//import com.example.websocketchatapp.WebSocketViewModel
 import com.example.razomua.viewmodel.RegisterViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun AppNavHost( webSocketViewModel: WebSocketViewModel) {
+fun AppNavHost() {
     val navController = rememberNavController()
     val registerViewModel: RegisterViewModel = viewModel()
     NavHost(navController = navController, startDestination = "welcome") {
@@ -39,9 +40,21 @@ fun AppNavHost( webSocketViewModel: WebSocketViewModel) {
         composable("swipe") {
             SwipeScreen(navController = navController)
         }
+//        composable("chats") {
+//            ListChatsScreen(navController = navController, viewModel = webSocketViewModel)
+//        }
+
         composable("chats") {
-            ListChatsScreen(navController = navController, viewModel = webSocketViewModel)
+            val viewModel: ChatViewModel = viewModel()
+            ListChatsScreen(navController, viewModel)
         }
+
+        composable("chat/{chatId}") { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getString("chatId") ?: return@composable
+            val viewModel: ChatViewModel = viewModel()
+            ChatScreen(chatId, viewModel, navController)
+        }
+
         composable("profile") {
             ProfileScreen(navController = navController)
         }
@@ -51,9 +64,9 @@ fun AppNavHost( webSocketViewModel: WebSocketViewModel) {
         composable("diagram") {
             DiagramScreen(navController = navController)
         }
-        composable("chat") { backStackEntry ->
-            ChatScreen(navController = navController, viewModel = webSocketViewModel)
-        }
+//        composable("chat") { backStackEntry ->
+//            ChatScreen(navController = navController, viewModel = webSocketViewModel)
+//        }
 
 
         composable("register2") {
