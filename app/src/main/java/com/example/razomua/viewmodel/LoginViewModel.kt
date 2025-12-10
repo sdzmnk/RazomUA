@@ -60,13 +60,20 @@
 
 package com.example.razomua.viewmodel
 
+import android.os.Bundle
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.analytics
+import com.google.firebase.analytics.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+
 
 class LoginViewModel : ViewModel() {
 
@@ -85,24 +92,40 @@ class LoginViewModel : ViewModel() {
     fun onPasswordChange(newPassword: String) {
         password.value = newPassword
     }
+    private val firebaseAnalytics: FirebaseAnalytics = Firebase.analytics
+
+
+    private fun logLoginEvent(success: Boolean, method: String = "email", error: String? = null) {
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.METHOD, method)
+        if (!success) {
+            bundle.putString("error", error)
+        }
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle)
+    }
+
 
     fun login() {
         val emailValue = email.value ?: ""
         val passwordValue = password.value ?: ""
 
         if (emailValue.isBlank() || passwordValue.isBlank()) {
+            logLoginEvent(success = false, error = "Поля порожні")
             emitEvent("Заповніть всі поля!")
             return
         }
 
         auth.signInWithEmailAndPassword(emailValue, passwordValue)
             .addOnSuccessListener {
+                logLoginEvent(success = true)
                 emitEvent("Логін успішний!")
             }
             .addOnFailureListener { e ->
+                logLoginEvent(success = false, error = e.localizedMessage)
                 emitEvent("Помилка входу: ${e.localizedMessage}")
             }
     }
+
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun emitEvent(message: String) {

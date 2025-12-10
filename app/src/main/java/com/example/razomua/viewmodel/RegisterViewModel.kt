@@ -1,17 +1,17 @@
-//package com.example.razomua.viewmodel
-//
-//import android.app.Application
-//import android.util.Log
-//import androidx.lifecycle.AndroidViewModel
-//import androidx.lifecycle.viewModelScope
-//import com.example.razomua.data.local.DatabaseProvider
-//import com.example.razomua.data.local.entity.UserEntity
-//import com.example.razomua.model.User
-//import kotlinx.coroutines.launch
-//import androidx.compose.runtime.mutableStateListOf
-//import androidx.lifecycle.LiveData
-//import androidx.lifecycle.MutableLiveData
-//import com.google.firebase.auth.FirebaseAuth
+package com.example.razomua.viewmodel
+
+import android.app.Application
+import android.util.Log
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.razomua.data.local.DatabaseProvider
+import com.example.razomua.data.local.entity.UserEntity
+import com.example.razomua.model.User
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.google.firebase.auth.FirebaseAuth
 
 //class RegisterViewModel(application: Application) : AndroidViewModel(application) {
 //
@@ -155,21 +155,11 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
     fun register(email: String, password: String, name: String) {
 
+        Log.d("REGISTER", "User tries to register: $email")
         auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { authResult ->
-
-                // Оновити displayName користувача в Firebase Auth
-                val user = authResult.user
-                user?.let {
-                    val profileUpdates = com.google.firebase.auth.UserProfileChangeRequest.Builder()
-                        .setDisplayName(name)
-                        .build()
-
-                    it.updateProfile(profileUpdates)
-                }
-
+            .addOnSuccessListener {
+                Log.d("REGISTER", "Registration successful: $email")
                 viewModelScope.launch {
-                    // Зберегти в Room (локально)
                     userDao.insert(
                         UserEntity(
                             id = 0,
@@ -188,9 +178,13 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                         _error.postValue("Помилка ініціалізації: ${error.localizedMessage}")
                     }
                 }
+
+                _registerState.value = true
             }
-            .addOnFailureListener {
-                _error.value = it.localizedMessage
+            .addOnFailureListener {exception ->
+                Log.e("REGISTER", "Registration failed: ${exception.localizedMessage}")
+                _error.value = exception.localizedMessage
             }
     }
 }
+
