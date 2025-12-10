@@ -127,19 +127,8 @@ import com.google.firebase.auth.FirebaseAuth
 //    }
 //}
 
-package com.example.razomua.viewmodel
 
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.razomua.data.local.DatabaseProvider
-import com.example.razomua.data.local.entity.UserEntity
-import com.example.razomua.repository.FirebaseChatRepository // ДОДАТИ ІМПОРТ
-import kotlinx.coroutines.launch
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.google.firebase.auth.FirebaseAuth
+import com.example.razomua.repository.FirebaseChatRepository
 
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
 
