@@ -50,7 +50,7 @@ android {
 dependencies {
 implementation(libs.androidx.navigation.testing)
     implementation(libs.core.ktx)
-    //    implementation(libs.firebase.database.ktx)
+//    implementation(libs.firebase.database.ktx)
     ksp(libs.androidx.room.compiler)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -104,4 +104,5 @@ implementation(libs.androidx.navigation.testing)
     androidTestImplementation("com.google.code.gson:gson:2.8.9")
     androidTestImplementation("com.google.truth:truth:1.1.5")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.google.firebase:firebase-database")
 }

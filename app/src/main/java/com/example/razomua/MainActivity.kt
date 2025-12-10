@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.razomua.navigation.AppNavHost
 import com.example.razomua.ui.theme.RazomUATheme
-import com.example.websocketchatapp.WebSocketViewModel
+//import com.example.websocketchatapp.WebSocketViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,8 +45,9 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             RazomUATheme(darkTheme = isDarkTheme) {
-                val webSocketViewModel: WebSocketViewModel = viewModel()
-                AppNavHost(webSocketViewModel)
+//                val webSocketViewModel: WebSocketViewModel = viewModel()
+//                AppNavHost(webSocketViewModel)
+                AppNavHost()
             }
         }
     }

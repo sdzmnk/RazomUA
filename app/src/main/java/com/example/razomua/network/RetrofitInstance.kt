@@ -14,13 +14,13 @@ object RetrofitInstance {
 
     private const val BASE_URL = "https://razom-ua.com/api/"
 
-    val apiSwipe: SwipeApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-            .build()
-            .create(SwipeApiService::class.java)
-    }
+//    val apiSwipe: SwipeApiService by lazy {
+//        Retrofit.Builder()
+//            .baseUrl(BASE_URL)
+//            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+//            .build()
+//            .create(SwipeApiService::class.java)
+//    }
     val apiProfile: ProfileApiService by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
