@@ -164,6 +164,10 @@ import androidx.navigation.NavController
 import com.example.razomua.R
 import com.example.razomua.viewmodel.ChatViewModel
 import com.example.razomua.ui.screens.welcome.components.MessageBubble
+import com.example.razomua.ui.theme.GrayLight
+import com.example.razomua.ui.theme.GrayMedium
+import com.example.razomua.ui.theme.Red
+import com.example.razomua.ui.theme.White
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -202,13 +206,13 @@ fun ChatScreen(
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Назад",
-                            tint = Color.White
+                            tint = White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = Color.White
+                    containerColor = Red,
+                    titleContentColor = White
                 )
             )
         },
@@ -258,7 +262,7 @@ fun ChatScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .background(MaterialTheme.colorScheme.background)
+                .background(White)
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -279,7 +283,8 @@ fun ChatScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(16.dp)
+                        .height(IntrinsicSize.Min), // ряд підлаштовується під найвищий елемент
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedTextField(
@@ -287,6 +292,7 @@ fun ChatScreen(
                         onValueChange = { messageText = it },
                         modifier = Modifier
                             .weight(1f)
+                            .fillMaxHeight() 
                             .padding(end = 8.dp),
                         placeholder = { Text("Введіть повідомлення...") },
                         shape = RoundedCornerShape(24.dp)
@@ -294,16 +300,23 @@ fun ChatScreen(
 
                     Button(
                         onClick = {
-                            if (messageText.isNotBlank()) {
-                                viewModel.sendMessage(messageText)
-                                messageText = ""
-                            }
+                            viewModel.sendMessage(messageText)
+                            messageText = ""
                         },
-                        enabled = isConnected && messageText.isNotBlank()
+                        enabled = messageText.isNotBlank() && isConnected,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Red,
+                            contentColor = White,
+                            disabledContainerColor = GrayLight,
+                            disabledContentColor = White
+                        ),
+                        modifier = Modifier
+                            .height(IntrinsicSize.Min)
                     ) {
                         Text("Надіслати")
                     }
                 }
+
             }
         }
     }

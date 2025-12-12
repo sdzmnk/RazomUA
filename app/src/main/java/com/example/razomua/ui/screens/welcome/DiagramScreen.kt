@@ -1,7 +1,6 @@
 package com.example.razomua.ui.screens.welcome
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Canvas
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,14 +21,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -38,10 +37,50 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.razomua.R
-import kotlinx.coroutines.delay
+import com.example.razomua.repository.FirebaseChatRepository
+import com.example.razomua.repository.FirebaseSwipeRepository
+import com.example.razomua.ui.theme.Red
+import com.example.razomua.ui.theme.White
+import com.example.razomua.viewmodel.SwipeViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.razomua.viewmodel.SwipeViewModelFactory
+
 
 @Composable
-fun DiagramScreen(navController: NavController) {
+fun DiagramScreen(navController: NavController,  swipeRepository: FirebaseSwipeRepository,
+                  chatRepository: FirebaseChatRepository
+) {
+    val viewModel: SwipeViewModel = viewModel(factory = SwipeViewModelFactory(swipeRepository))
+
+    val likes by viewModel.likesReceived.collectAsState(initial = 0)
+
+
+    var matchesCount by remember { mutableStateOf(0) }
+    var messagesCount by remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        try {
+            swipeRepository.getUserMatchesCountFlow().collect { count ->
+                matchesCount = count
+            }
+        } catch (e: Exception) {
+            Log.e("DiagramScreen", "Error collecting matchesCount", e)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        try {
+            chatRepository.getUserMessagesCountFlow().collect { count ->
+                messagesCount = count
+            }
+        } catch (e: Exception) {
+            Log.e("DiagramScreen", "Error collecting messagesCount", e)
+        }
+    }
+
+
+
+
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -119,77 +158,79 @@ fun DiagramScreen(navController: NavController) {
                     fontSize = 16.sp,
                     color = Color.Gray
                 )
+                Spacer(modifier = Modifier.height(20.dp))
+
+                StatisticCard(
+                    iconId = R.drawable.cards,
+                    title = "Кількість мeчів",
+                    value = matchesCount,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                StatisticCard(
+                    iconId = R.drawable.chats,
+                    title = "Кількість повідомлень",
+                    value = messagesCount,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                StatisticCard(
+                    iconId = R.drawable.heart,
+                    title = "Отримано лайків",
+                    value = likes,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
 
                 Spacer(modifier = Modifier.height(40.dp))
-
-                UserStatsDiagram()
-
-                Spacer(modifier = Modifier.height(40.dp))
-
-                Column(horizontalAlignment = Alignment.Start) {
-                    StatLegend(color = Color(0xFFFF6F61), label = "Лайки — 70%")
-                    StatLegend(color = Color(0xFF6A5ACD), label = "Матчі — 20%")
-                    StatLegend(color = Color(0xFF4CAF50), label = "Повідомлення — 10%")
-                }
             }
         }
     }
 }
-
-
 @Composable
-fun UserStatsDiagram() {
-    val data = listOf(
-        0.7f to Color(0xFFFF6F61),  // лайки
-        0.2f to Color(0xFF6A5ACD),  // матчі
-        0.1f to Color(0xFF4CAF50)   // повідомлення
-    )
-
-    var startAnimation by remember { mutableStateOf(false) }
-    val animatedProgress = animateFloatAsState(
-        targetValue = if (startAnimation) 1f else 0f,
-        animationSpec = androidx.compose.animation.core.tween(durationMillis = 1500)
-    )
-
-    LaunchedEffect(Unit) {
-        delay(300)
-        startAnimation = true
-    }
-
-    Canvas(
-        modifier = Modifier
-            .size(220.dp)
-            .padding(16.dp)
-            .testTag("UserStatsDiagram") // <-- додаємо testTag
-    ) {
-        var startAngle = -90f
-        data.forEach { (percent, color) ->
-            val sweepAngle = 360 * percent * animatedProgress.value
-            drawArc(
-                color = color,
-                startAngle = startAngle,
-                sweepAngle = sweepAngle,
-                useCenter = true,
-                topLeft = Offset(0f, 0f),
-                size = Size(size.width, size.height)
-            )
-            startAngle += 360 * percent
-        }
-    }
-}
-
-@Composable
-fun StatLegend(color: Color, label: String) {
+fun StatisticCard(
+    iconId: Int,
+    title: String,
+    value: Int,
+    modifier: Modifier = Modifier
+) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 4.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = Red,
+                shape = MaterialTheme.shapes.medium
+            )
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(16.dp)
-                .background(color, shape = MaterialTheme.shapes.small)
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null,
+            tint = White,
+            modifier = Modifier.size(28.dp)
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(text = label, color = Color.Black)
+
+        Spacer(modifier = Modifier.width(12.dp))
+
+        Text(
+            text = title,
+            color = White,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            text = value.toString(),
+            color = White,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
+
