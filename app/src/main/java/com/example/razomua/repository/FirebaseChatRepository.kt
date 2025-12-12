@@ -207,7 +207,7 @@ class FirebaseChatRepository {
                 "isOnline" to isOnline,
                 "lastSeen" to System.currentTimeMillis()
             )
-            // Обновляем статус в корневом узле пользователя
+
             usersRef.child(userId).updateChildren(updates).await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -215,7 +215,6 @@ class FirebaseChatRepository {
         }
     }
 
-    // Новая функция для получения ChatUser по ID
     suspend fun getChatUserById(userId: String): ChatUser? {
         return try {
             usersRef.child(userId).get().await().getValue(ChatUser::class.java)
@@ -224,13 +223,11 @@ class FirebaseChatRepository {
         }
     }
 
-    // Обновлено: убрана логика создания тестовых пользователей
     suspend fun initializeCurrentUser(): Result<Unit> {
         return try {
             val userId = getCurrentUserId() ?: return Result.failure(Exception("User not authenticated"))
             val userName = getCurrentUserName() ?: "Користувач"
 
-            // Устанавливаем только основные данные пользователя
             val userData = mapOf<String, Any>(
                 "id" to userId,
                 "name" to userName,
@@ -238,7 +235,6 @@ class FirebaseChatRepository {
                 "lastSeen" to System.currentTimeMillis()
             )
 
-            // Используем updateChildren, чтобы не удалять существующие узлы, такие как "chats"
             usersRef.child(userId).updateChildren(userData).await()
             Log.d("FirebaseChat", "Current user initialized: $userName ($userId)")
             Result.success(Unit)

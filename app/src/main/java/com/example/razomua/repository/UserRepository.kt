@@ -8,10 +8,8 @@ import com.example.razomua.model.User
 import com.example.razomua.network.UserApiService
 import com.example.razomua.network.RetrofitInstance
 import kotlinx.coroutines.withContext
-import android.util.Log
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 
 class UserRepository(
     private val userDao: UserDao,

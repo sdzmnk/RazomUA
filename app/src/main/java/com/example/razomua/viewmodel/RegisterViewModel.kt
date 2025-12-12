@@ -158,7 +158,6 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                         )
                     )
 
-                    // ДОДАТИ: Ініціалізувати користувача в Firebase Realtime Database
                     chatRepository.initializeCurrentUser().onSuccess {
                         Log.d("RegisterViewModel", "User initialized in Firebase Database")
                         _registerState.postValue(true)

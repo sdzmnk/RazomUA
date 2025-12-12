@@ -24,14 +24,14 @@ import com.example.razomua.ui.theme.Montserrat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-// Модель користувача
+
 data class NearbyUser(
     val id: String,
     val name: String,
     val distance: Double
 )
 
-// Компонент рядка користувача
+
 @Composable
 fun NearbyUserItem(user: NearbyUser, onClick: () -> Unit) {
     Card(
@@ -66,7 +66,7 @@ fun NearbyUsersScreen(navController: NavController, onUserClick: (String) -> Uni
         NearbyUser("5", "Sasha", 8.0)
     )
 
-    // Простий State для показу тестових юзерів після 4 секунд
+
     var showTestUsers by remember { mutableStateOf(false) }
 
     Scaffold(
