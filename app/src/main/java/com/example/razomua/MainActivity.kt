@@ -18,7 +18,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.example.razomua.data.local.DatabaseProvider
-import com.example.razomua.repository.UserRepository
+//import com.example.razomua.repository.UserRepository
+import com.google.firebase.FirebaseApp
+import com.google.firebase.appcheck.FirebaseAppCheck
+import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
@@ -29,13 +32,19 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val db = DatabaseProvider.getDatabase(this)
-        val repository = UserRepository(db.userDao())
+        FirebaseApp.initializeApp(this)
 
-        CoroutineScope(Dispatchers.IO).launch {
-            val users = repository.getAllUsersLocal()
-            users.forEach { Log.d("DB_TEST2", it.toString()) }
-        }
+        // Подключаем Debug App Check
+        val debugFactory = DebugAppCheckProviderFactory.getInstance()
+        FirebaseAppCheck.getInstance().installAppCheckProviderFactory(debugFactory)
+
+        val db = DatabaseProvider.getDatabase(this)
+//        val repository = UserRepository(db.userDao())
+
+//        CoroutineScope(Dispatchers.IO).launch {
+//            val users = repository.getAllUsersLocal()
+//            users.forEach { Log.d("DB_TEST2", it.toString()) }
+//        }
 
         enableEdgeToEdge()
 

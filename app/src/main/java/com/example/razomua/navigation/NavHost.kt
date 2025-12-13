@@ -76,7 +76,7 @@ fun AppNavHost() {
         }
 
         composable("register3") {
-            PreferencesSettingsScreen(navController = navController)
+            PreferencesSettingsScreen(navController = navController, registerViewModel = registerViewModel)
         }
         composable("nearby") {
             NearbyUsersScreen(

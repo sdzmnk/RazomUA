@@ -1,4 +1,3 @@
-
 package com.example.razomua.viewmodel
 
 import android.util.Log
@@ -26,6 +25,7 @@ class SwipeViewModel(
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
     private val _likesReceived = MutableStateFlow(0)
     val likesReceived: StateFlow<Int> = _likesReceived.asStateFlow()
 
@@ -33,6 +33,7 @@ class SwipeViewModel(
         loadAvailableUsers()
         observeLikes()
     }
+
     private fun observeLikes() {
         viewModelScope.launch {
             repository.getLikesReceivedCountFlow().collect { count ->
@@ -40,14 +41,32 @@ class SwipeViewModel(
             }
         }
     }
+
     fun loadAvailableUsers() {
         viewModelScope.launch {
             try {
                 _isLoading.value = true
+                Log.d("SwipeViewModel", "=== Loading available users ===")
+
                 val result = repository.getAvailableUsers()
                 result.onSuccess { users ->
+                    Log.d("SwipeViewModel", "Received ${users.size} users from repository")
+
+                    users.forEachIndexed { index, user ->
+                        Log.d("SwipeViewModel", "====================")
+                        Log.d("SwipeViewModel", "User #$index in ViewModel:")
+                        Log.d("SwipeViewModel", "  ID: ${user.id}")
+                        Log.d("SwipeViewModel", "  Name: ${user.name}")
+                        Log.d("SwipeViewModel", "  PhotoURL: '${user.photoUrl}'")
+                        Log.d("SwipeViewModel", "  PhotoURL isEmpty: ${user.photoUrl.isEmpty()}")
+                        Log.d("SwipeViewModel", "  PhotoURL length: ${user.photoUrl.length}")
+                        Log.d("SwipeViewModel", "  isOnline: ${user.isOnline}")
+                        Log.d("SwipeViewModel", "====================")
+                    }
+
                     _availableUsers.value = users
                     _currentUserIndex.value = 0
+                    Log.d("SwipeViewModel", "Users loaded successfully")
                 }
                 result.onFailure { e ->
                     Log.e("SwipeViewModel", "Error loading users", e)
@@ -79,7 +98,6 @@ class SwipeViewModel(
             }
         }
     }
-
 
     fun dismissMatchDialog() {
         viewModelScope.launch {
