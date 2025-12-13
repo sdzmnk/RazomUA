@@ -118,7 +118,7 @@ fun GoogleMapsScreen(navController: NavController) {
                     }
                     IconButton(onClick = { navController.navigate("profile") }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.user),
+                            painter = painterResource(id = R.drawable.pic_for_chat1),
                             contentDescription = "Profile",
                             tint = Color.Black,
                             modifier = Modifier.size(28.dp)

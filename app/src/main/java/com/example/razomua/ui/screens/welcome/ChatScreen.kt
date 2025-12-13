@@ -14,15 +14,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.razomua.R
 import com.example.razomua.viewmodel.ChatViewModel
 import com.example.razomua.ui.screens.welcome.components.MessageBubble
 import com.example.razomua.ui.theme.GrayLight
-import com.example.razomua.ui.theme.GrayMedium
+import com.example.razomua.ui.theme.Montserrat
 import com.example.razomua.ui.theme.Red
 import com.example.razomua.ui.theme.White
 import kotlinx.coroutines.launch
@@ -57,7 +55,8 @@ fun ChatScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Чат", fontWeight = FontWeight.Bold) },
+                title = { Text("Чат",
+                    fontFamily = Montserrat) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
@@ -105,7 +104,7 @@ fun ChatScreen(
 
                     IconButton(onClick = { navController.navigate("profile") }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.user),
+                            painter = painterResource(id = R.drawable.pic_for_chat1),
                             contentDescription = "Profile",
                             tint = Color.Black,
                             modifier = Modifier.size(28.dp)
@@ -141,7 +140,7 @@ fun ChatScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
-                        .height(IntrinsicSize.Min), // ряд підлаштовується під найвищий елемент
+                        .height(IntrinsicSize.Min),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     OutlinedTextField(
@@ -152,7 +151,10 @@ fun ChatScreen(
                             .fillMaxHeight() 
                             .padding(end = 8.dp),
                         placeholder = { Text("Введіть повідомлення...") },
-                        shape = RoundedCornerShape(24.dp)
+                        shape = RoundedCornerShape(24.dp),
+                        textStyle = LocalTextStyle.current.copy(
+                            color = Color(0xFF212121)
+                        )
                     )
 
                     Button(
@@ -170,7 +172,8 @@ fun ChatScreen(
                         modifier = Modifier
                             .height(IntrinsicSize.Min)
                     ) {
-                        Text("Надіслати")
+                        Text("Надіслати",
+                            fontFamily = Montserrat)
                     }
                 }
 

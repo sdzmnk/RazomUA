@@ -93,7 +93,7 @@ fun ProfileScreen(
                     }
                     IconButton(onClick = { navController.navigate("profile") }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.user),
+                            painter = painterResource(id = R.drawable.pic_for_chat1),
                             contentDescription = "Profile",
                             tint = Color.Black,
                             modifier = Modifier.size(28.dp)
@@ -168,32 +168,42 @@ fun ProfileScreen(
                     Text(
                         text = currentUser.purpose,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                        fontFamily = Montserrat
+                        fontFamily = Montserrat ,
+                        color = Color(0xFF424242)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
             }
 
-            // Хобби
+            // Хоббі
             if (currentUser.hobbies.isNotEmpty()) {
-                Text(text = "Більше про мене", fontFamily = Montserrat, color = Color.Blue)
-                Row(
+                Text(
+                    text = "Більше про мене",
+                    fontFamily = Montserrat,
+                    color = Color.Blue,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Column(
                     modifier = Modifier
-                        .padding(top = 4.dp)
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    currentUser.hobbies.take(3).forEach { hobby ->
+                    currentUser.hobbies.forEach { hobby ->
                         Surface(
                             color = Color(0xFFE0E0E0),
                             shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier.padding(end = 8.dp, bottom = 8.dp)
+                            modifier = Modifier
+                                .padding(vertical = 4.dp)
                         ) {
                             Text(
                                 text = hobby,
-                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                fontFamily = Montserrat
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                fontFamily = Montserrat,
+                                color = Color(0xFF424242)
                             )
                         }
                     }
@@ -203,6 +213,7 @@ fun ProfileScreen(
             }
 
             Spacer(modifier = Modifier.weight(1f))
+
 
             // Кнопки
             Button(

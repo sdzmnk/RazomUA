@@ -123,7 +123,7 @@ fun DiagramScreen(navController: NavController,  swipeRepository: FirebaseSwipeR
                         modifier = Modifier.testTag("ProfileButton")
                     ) {
                         Icon(
-                            painter = painterResource(id = R.drawable.user),
+                            painter = painterResource(id = R.drawable.pic_for_chat1),
                             contentDescription = "Profile",
                             tint = Color.Black,
                             modifier = Modifier.size(28.dp)

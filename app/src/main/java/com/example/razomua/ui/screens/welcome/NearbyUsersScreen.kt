@@ -1,7 +1,5 @@
 package com.example.razomua.ui.screens.welcome
 
-import android.bluetooth.BluetoothAdapter
-import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -102,7 +100,7 @@ fun NearbyUsersScreen(navController: NavController, onUserClick: (String) -> Uni
 
                     IconButton(onClick = { navController.navigate("profile") }) {
                         Icon(
-                            painter = painterResource(id = R.drawable.user),
+                            painter = painterResource(id = R.drawable.pic_for_chat1),
                             contentDescription = "Profile",
                             tint = Color.Black,
                             modifier = Modifier.size(28.dp)
