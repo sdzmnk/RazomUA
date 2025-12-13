@@ -92,10 +92,49 @@ import com.google.firebase.auth.FirebaseAuth
 //}
 
 
+//class RegisterViewModel(application: Application) : AndroidViewModel(application) {
+//
+//    private val auth = FirebaseAuth.getInstance()
+//    private val userDao = DatabaseProvider.getDatabase(application).userDao()
+//
+//    private val _registerState = MutableLiveData<Boolean>()
+//    val registerState: LiveData<Boolean> = _registerState
+//
+//    private val _error = MutableLiveData<String>()
+//    val error: LiveData<String> = _error
+//
+//    fun register(email: String, password: String, name: String) {
+//
+//        auth.createUserWithEmailAndPassword(email, password)
+//            .addOnSuccessListener {
+//
+//                viewModelScope.launch {
+//                    userDao.insert(
+//                        UserEntity(
+//                            id = 0,
+//                            email = email,
+//                            password = password,
+//                            name = name,
+//                        )
+//                    )
+//                }
+//
+//                _registerState.value = true
+//            }
+//            .addOnFailureListener {
+//                _error.value = it.localizedMessage
+//            }
+//    }
+//}
+
+
+import com.example.razomua.repository.FirebaseChatRepository
+
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
 
     private val auth = FirebaseAuth.getInstance()
     private val userDao = DatabaseProvider.getDatabase(application).userDao()
+    private val chatRepository = FirebaseChatRepository() // ДОДАТИ
 
     private val _registerState = MutableLiveData<Boolean>()
     val registerState: LiveData<Boolean> = _registerState
@@ -105,9 +144,10 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
 
     fun register(email: String, password: String, name: String) {
 
+        Log.d("REGISTER", "User tries to register: $email")
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
-
+                Log.d("REGISTER", "Registration successful: $email")
                 viewModelScope.launch {
                     userDao.insert(
                         UserEntity(
@@ -117,12 +157,21 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                             name = name,
                         )
                     )
+
+                    chatRepository.initializeCurrentUser().onSuccess {
+                        Log.d("RegisterViewModel", "User initialized in Firebase Database")
+                        _registerState.postValue(true)
+                    }.onFailure { error ->
+                        Log.e("RegisterViewModel", "Failed to initialize user", error)
+                        _error.postValue("Помилка ініціалізації: ${error.localizedMessage}")
+                    }
                 }
 
                 _registerState.value = true
             }
-            .addOnFailureListener {
-                _error.value = it.localizedMessage
+            .addOnFailureListener {exception ->
+                Log.e("REGISTER", "Registration failed: ${exception.localizedMessage}")
+                _error.value = exception.localizedMessage
             }
     }
 }

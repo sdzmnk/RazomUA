@@ -167,8 +167,6 @@ fun PreferencesSettingsScreen(navController: NavController) {
 
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-//                mainAxisSpacing = 8.dp,
-//                crossAxisSpacing = 8.dp
             ) {
                 hobbies.forEach { hobby ->
                     val isSelected = selectedHobbies.contains(hobby)

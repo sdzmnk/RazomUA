@@ -33,7 +33,7 @@ fun ProfileScreen(navController: NavController) {
         mutableStateOf(generateQRCode("https://razomua.com/profile/$testUserId"))
     }
 
-    val context = LocalContext.current // Для запуску NFC активності
+    val context = LocalContext.current
 
     Scaffold(
         bottomBar = {
@@ -169,7 +169,6 @@ fun ProfileScreen(navController: NavController) {
                 Text(text = "Згенерувати QR Code", color = Color.White, fontFamily = Montserrat)
             }
 
-            // 🔥 Нова кнопка для NFC
             Spacer(modifier = Modifier.height(12.dp))
             Button(
                 onClick = {

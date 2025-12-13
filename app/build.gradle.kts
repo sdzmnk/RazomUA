@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ksp)
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -38,12 +39,17 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.2"
+    }
     buildFeatures {
         compose = true
     }
 }
 
 dependencies {
+implementation(libs.androidx.navigation.testing)
+    implementation(libs.core.ktx)
 //    implementation(libs.firebase.database.ktx)
     ksp(libs.androidx.room.compiler)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
@@ -68,11 +74,15 @@ dependencies {
     implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.mockito:mockito-core:5.5.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
     implementation("com.google.maps.android:maps-compose:4.3.0")
@@ -80,8 +90,19 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
     implementation("com.google.android.libraries.places:places:3.5.0")
     implementation("androidx.room:room-runtime:2.6.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     implementation("com.google.zxing:core:3.5.2")
     implementation(platform("com.google.firebase:firebase-bom:34.6.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
     implementation ("com.google.firebase:firebase-auth")
+    androidTestImplementation("com.kaspersky.android-components:kaspresso:1.4.1") // опціонально
+    androidTestImplementation ("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.5.2") // збігається з composeOptions
+    testImplementation(kotlin("test"))
+    androidTestImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
+    androidTestImplementation("com.google.code.gson:gson:2.8.9")
+    androidTestImplementation("com.google.truth:truth:1.1.5")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.google.firebase:firebase-database")
 }

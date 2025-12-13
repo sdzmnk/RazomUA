@@ -67,6 +67,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.razomua.model.Message
+import com.example.razomua.ui.theme.GrayDark
+import com.example.razomua.ui.theme.GrayLight
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -76,7 +78,7 @@ fun MessageBubble(message: Message) {
     val backgroundColor = if (message.isCurrentUser)
         MaterialTheme.colorScheme.primary
     else
-        MaterialTheme.colorScheme.surfaceVariant
+        GrayLight
     val textColor = if (message.isCurrentUser) Color.White else Color.Black
 
     Column(
@@ -96,7 +98,7 @@ fun MessageBubble(message: Message) {
                         text = message.senderName,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = GrayDark
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                 }

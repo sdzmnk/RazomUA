@@ -7,6 +7,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.razomua.repository.FirebaseChatRepository
+import com.example.razomua.repository.FirebaseSwipeRepository
 import com.example.razomua.ui.screens.login.LoginScreen
 import com.example.razomua.ui.screens.register.RegisterScreen
 import com.example.razomua.ui.screens.welcome.ChatScreen
@@ -27,6 +29,8 @@ import com.example.razomua.viewmodel.RegisterViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppNavHost() {
+    val swipeRepository = FirebaseSwipeRepository()
+    val chatRepository = FirebaseChatRepository()
     val navController = rememberNavController()
     val registerViewModel: RegisterViewModel = viewModel()
     NavHost(navController = navController, startDestination = "welcome") {
@@ -40,9 +44,6 @@ fun AppNavHost() {
         composable("swipe") {
             SwipeScreen(navController = navController)
         }
-//        composable("chats") {
-//            ListChatsScreen(navController = navController, viewModel = webSocketViewModel)
-//        }
 
         composable("chats") {
             val viewModel: ChatViewModel = viewModel()
@@ -62,11 +63,12 @@ fun AppNavHost() {
             GoogleMapsScreen(navController = navController)
         }
         composable("diagram") {
-            DiagramScreen(navController = navController)
+            DiagramScreen(
+                navController = navController,
+                swipeRepository = swipeRepository,
+                chatRepository = chatRepository
+            )
         }
-//        composable("chat") { backStackEntry ->
-//            ChatScreen(navController = navController, viewModel = webSocketViewModel)
-//        }
 
 
         composable("register2") {

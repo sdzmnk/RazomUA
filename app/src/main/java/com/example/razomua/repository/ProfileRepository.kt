@@ -14,13 +14,12 @@ class ProfileRepository(
     private val api: ProfileApiService = RetrofitInstance.apiProfile // мережа
 )  {
 
-    // Offline-first:
     suspend fun getProfileLocalFirst(userId: Int): Profile? {
         val localProfile = profileDao.getProfileByUserId(userId)?.toDomain()
         if (localProfile != null) return localProfile
 
         val result = getProfileFromApi(userId)
-        result.getOrNull()?.let { profileDao.insert(it.toEntity()) } // зберігаємо локально
+        result.getOrNull()?.let { profileDao.insert(it.toEntity()) }
         return result.getOrNull()
     }
 
@@ -79,7 +78,6 @@ class ProfileRepository(
         }
     }
 
-    // Оновлення локальної бази через сервер (для Worker)
     suspend fun refreshProfilesFromServer() {
         val response = api.getAllProfiles()
         if (response.isSuccessful) {

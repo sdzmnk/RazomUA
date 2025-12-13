@@ -25,14 +25,7 @@ data class ProfileDTO(
     val location: String? = null
 )
 
-//@Serializable
-//data class SwipeDTO(
-//    val id: Long,
-//    val fromUserId: Int,
-//    val toUserId: Int,
-//    val action: String,
-//    val createdAt: String
-//)
+
 
 // Функції парсингу
 fun parseUsersJson(jsonString: String): List<User> {
@@ -60,16 +53,3 @@ fun parseProfilesJson(jsonString: String): List<Profile> {
         )
     }
 }
-
-//fun parseSwipesJson(jsonString: String): List<Swipe> {
-//    val dtoList = Json.decodeFromString<List<SwipeDTO>>(jsonString)
-//    return dtoList.map { dto ->
-//        Swipe(
-//            id = dto.id.toInt(),
-//            fromUserId = dto.fromUserId,
-//            toUserId = dto.toUserId,
-//            action = dto.action,
-//            createdAt = dto.createdAt
-//        )
-//    }
-//}
