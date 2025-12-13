@@ -1,5 +1,3 @@
-
-
 package com.example.razomua.ui.screens.welcome
 
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -28,11 +27,43 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.SubcomposeAsyncImage
 import com.example.razomua.R
+import com.example.razomua.model.ChatUser
 import com.example.razomua.model.SwipeAction
 import com.example.razomua.ui.theme.Red
 import com.example.razomua.ui.theme.White
 import com.example.razomua.viewmodel.SwipeViewModel
+import java.util.Calendar
+
+
+fun ChatUser.calculateAge(): Int? {
+    if (birthday.isEmpty()) return null
+
+    return try {
+        val parts = birthday.split(".")
+        if (parts.size != 3) return null
+
+        val day = parts[0].toInt()
+        val month = parts[1].toInt()
+        val year = parts[2].toInt()
+
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val currentMonth = calendar.get(Calendar.MONTH) + 1
+        val currentDay = calendar.get(Calendar.DAY_OF_MONTH)
+
+        var age = currentYear - year
+
+        if (currentMonth < month || (currentMonth == month && currentDay < day)) {
+            age--
+        }
+
+        age
+    } catch (e: Exception) {
+        null
+    }
+}
 
 @Composable
 fun SwipeScreen(
@@ -45,7 +76,7 @@ fun SwipeScreen(
     val isLoading by viewModel.isLoading.collectAsState()
 
     var offsetX by remember { mutableStateOf(0f) }
-    val rotation by animateFloatAsState(targetValue = offsetX / 20)
+    val rotation by animateFloatAsState(targetValue = offsetX / 20, label = "rotation")
 
     matchResult?.let { match ->
         MatchDialog(
@@ -111,9 +142,10 @@ fun SwipeScreen(
             contentAlignment = Alignment.Center
         ) {
             when {
-                isLoading -> {
+                isLoading && currentUserIndex < availableUsers.size -> {
                     CircularProgressIndicator()
                 }
+
                 currentUserIndex >= availableUsers.size -> {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
@@ -121,24 +153,32 @@ fun SwipeScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Button(onClick = { viewModel.loadAvailableUsers() },
+                        Button(
+                            onClick = { viewModel.loadAvailableUsers() },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Red,
                                 contentColor = White
-                            )) {
+                            )
+                        ) {
                             Text("Оновити")
                         }
                     }
                 }
+
                 else -> {
                     val currentUser = availableUsers[currentUserIndex]
 
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        Spacer(modifier = Modifier.height(24.dp))
+
                         Card(
                             shape = RoundedCornerShape(20.dp),
                             modifier = Modifier
                                 .fillMaxWidth(0.9f)
-                                .aspectRatio(0.6f)
+                                .aspectRatio(0.65f)
                                 .offset(x = offsetX.dp)
                                 .rotate(rotation)
                                 .pointerInput(Unit) {
@@ -146,10 +186,17 @@ fun SwipeScreen(
                                         onDragEnd = {
                                             when {
                                                 offsetX > 200 -> {
-                                                    viewModel.sendSwipe(currentUser.id, SwipeAction.LIKE)
+                                                    viewModel.sendSwipe(
+                                                        currentUser.id,
+                                                        SwipeAction.LIKE
+                                                    )
                                                 }
+
                                                 offsetX < -200 -> {
-                                                    viewModel.sendSwipe(currentUser.id, SwipeAction.DISLIKE)
+                                                    viewModel.sendSwipe(
+                                                        currentUser.id,
+                                                        SwipeAction.DISLIKE
+                                                    )
                                                 }
                                             }
                                             offsetX = 0f
@@ -162,44 +209,47 @@ fun SwipeScreen(
                             colors = CardDefaults.cardColors(containerColor = Color.White),
                             elevation = CardDefaults.cardElevation(6.dp)
                         ) {
-                            Box {
-                                Image(
-                                    painter = painterResource(
-                                        id = if (currentUser.imageRes != 0)
-                                            currentUser.imageRes
-                                        else
-                                            R.drawable.pic_for_chat1
-                                    ),
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                val imageUrl = currentUser.photoUrl
+
+                                SubcomposeAsyncImage(
+                                    model = if (imageUrl.isNotEmpty()) imageUrl else R.drawable.pic_for_chat1,
                                     contentDescription = "User photo",
                                     contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-
-                                Column(
-                                    modifier = Modifier
-                                        .align(Alignment.BottomStart)
-                                        .background(Color(0x99000000))
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                ) {
-                                    Text(
-                                        text = "${currentUser.name}, 25",
-                                        fontSize = 24.sp,
-                                        color = Color.White,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    if (currentUser.isOnline) {
-                                        Text(
-                                            text = "🟢 В мережі",
-                                            color = Color.White,
-                                            fontSize = 14.sp
+                                    modifier = Modifier.fillMaxSize(),
+                                    loading = {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(24.dp),
+                                            color = Color(0xFFE53935),
+                                            strokeWidth = 3.dp
+                                        )
+                                    },
+                                    error = {
+                                        Image(
+                                            painter = painterResource(R.drawable.pic_for_chat1),
+                                            contentDescription = "Error loading image",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    },
+                                    success = { state ->
+                                        Image(
+                                            painter = state.painter,
+                                            contentDescription = "User photo",
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
                                         )
                                     }
-                                }
+                                )
+
+                                DetailedUserOverlay(currentUser = currentUser)
                             }
                         }
 
-                        Spacer(modifier = Modifier.height(24.dp))
+                        Spacer(modifier = Modifier.height(32.dp))
 
                         Row(
                             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -246,6 +296,94 @@ fun SwipeScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun BoxScope.DetailedUserOverlay(currentUser: ChatUser) {
+    Column(
+        modifier = Modifier
+            .align(Alignment.BottomStart)
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        Color.Black.copy(alpha = 0.8f)
+                    )
+                )
+            )
+            .fillMaxWidth()
+            .padding(20.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = currentUser.name,
+                fontSize = 28.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = ", ${currentUser.calculateAge() ?: "—"}",
+                fontSize = 28.sp,
+                color = Color.White
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        InfoRow(
+            icon = if (currentUser.isOnline) "🟢" else "⚫",
+            text = if (currentUser.isOnline) "В мережі" else "Офлайн"
+        )
+
+        if (currentUser.location.isNotEmpty()) {
+            InfoRow(icon = "📍", text = currentUser.location)
+        }
+        if (currentUser.gender.isNotEmpty()) {
+            InfoRow(icon = "👤", text = currentUser.gender)
+        }
+        if (currentUser.purpose.isNotEmpty()) {
+            InfoRow(icon = "💫", text = currentUser.purpose)
+        }
+
+        if (currentUser.hobbies.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                currentUser.hobbies.take(5).forEach { hobby ->
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = Color.White.copy(alpha = 0.2f)
+                    ) {
+                        Text(
+                            text = hobby,
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
+                            color = Color.White,
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun InfoRow(icon: String, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 2.dp)
+    ) {
+        Text(text = icon, fontSize = 14.sp)
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = text,
+            color = Color.White,
+            fontSize = 14.sp
+        )
     }
 }
 

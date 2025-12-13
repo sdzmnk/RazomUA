@@ -1,5 +1,11 @@
 package com.example.razomua.ui.screens.welcome
 
+import android.net.Uri
+import android.os.Build
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,19 +17,55 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.example.razomua.repository.ImageRepository
 import com.example.razomua.viewmodel.RegisterViewModel
+import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun RegistrationPart2Screen(navController: NavController, registerViewModel: RegisterViewModel) {
-    val name = remember { mutableStateOf("") }
+fun RegistrationPart2Screen(
+    navController: NavController,
+    registerViewModel: RegisterViewModel
+) {
     val selectedGender = remember { mutableStateOf<String?>(null) }
     val day = remember { mutableStateOf("") }
     val month = remember { mutableStateOf("") }
     val year = remember { mutableStateOf("") }
+    val selectedImageUri = remember { mutableStateOf<Uri?>(null) }
+    val uploadedImageUrl = remember { mutableStateOf<String?>(null) }
+    val isUploading = remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val imageRepository = remember { ImageRepository() }
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            selectedImageUri.value = it
+            isUploading.value = true
+
+            coroutineScope.launch {
+                val imageUrl = imageRepository.uploadImage(it, context)
+
+                if (imageUrl != null) {
+                    uploadedImageUrl.value = imageUrl
+                    Log.d("RegistrationPart2", "Image uploaded: $imageUrl")
+                } else {
+                    Log.e("RegistrationPart2", "Failed to upload image")
+                }
+                isUploading.value = false
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -45,33 +87,6 @@ fun RegistrationPart2Screen(navController: NavController, registerViewModel: Reg
             text = "Розкажи про себе — це допоможе створити профіль.",
             fontSize = 14.sp,
             color = Color.Gray
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = "Як тебе звати?",
-            fontSize = 18.sp,
-            color = Color(0xFF1A1A9E),
-            fontWeight = FontWeight.Medium
-        )
-
-        Text(
-            text = "Під цим іменем тебе будуть бачити інші.",
-            fontSize = 14.sp,
-            color = Color.Gray
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = name.value,
-            onValueChange = { name.value = it },
-            placeholder = { Text("Ім'я") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(50)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -119,27 +134,21 @@ fun RegistrationPart2Screen(navController: NavController, registerViewModel: Reg
                 value = day.value,
                 onValueChange = { day.value = it },
                 placeholder = { Text("День") },
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(56.dp),
+                modifier = Modifier.width(90.dp).height(56.dp),
                 shape = RoundedCornerShape(50)
             )
             OutlinedTextField(
                 value = month.value,
                 onValueChange = { month.value = it },
                 placeholder = { Text("Місяць") },
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(56.dp),
+                modifier = Modifier.width(90.dp).height(56.dp),
                 shape = RoundedCornerShape(50)
             )
             OutlinedTextField(
                 value = year.value,
                 onValueChange = { year.value = it },
                 placeholder = { Text("Рік") },
-                modifier = Modifier
-                    .width(90.dp)
-                    .height(56.dp),
+                modifier = Modifier.width(90.dp).height(56.dp),
                 shape = RoundedCornerShape(50)
             )
         }
@@ -157,29 +166,70 @@ fun RegistrationPart2Screen(navController: NavController, registerViewModel: Reg
 
         Box(
             modifier = Modifier
-                .size(100.dp)
+                .size(120.dp)
                 .border(1.dp, Color.Gray, RoundedCornerShape(16.dp))
                 .clip(RoundedCornerShape(16.dp))
-                .clickable { /* TODO: handle photo upload */ },
+                .clickable(enabled = !isUploading.value) {
+                    launcher.launch("image/*")
+                },
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Додати фото",
-                tint = Color.Gray,
-                modifier = Modifier.size(40.dp)
-            )
+            when {
+                isUploading.value -> {
+                    CircularProgressIndicator()
+                }
+                selectedImageUri.value != null -> {
+                    AsyncImage(
+                        model = selectedImageUri.value,
+                        contentDescription = "Selected photo",
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                else -> {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Додати фото",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
         }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd
         ) {
+            FloatingActionButton(
+                onClick = {
+                    if (isUploading.value) return@FloatingActionButton
+                    val birthday = "${day.value}.${month.value}.${year.value}"
+                    val uid = registerViewModel.auth.currentUser?.uid ?: return@FloatingActionButton
 
+                    val userMap = hashMapOf(
+                        "gender" to (selectedGender.value ?: ""),
+                        "birthday" to birthday,
+                        "photoUrl" to (uploadedImageUrl.value ?: "")
+                    )
+
+                    registerViewModel.chatRepository.saveUserData(uid, userMap)
+                        .addOnSuccessListener {
+                            Log.d("RegistrationPart2", "User data saved successfully")
+                            navController.navigate("register3")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("RegistrationPart2", "Error saving user data: ${e.localizedMessage}")
+                        }
+                },
+                containerColor = if (isUploading.value) Color.Gray else Color(0xFF1A1A9E)
+            ) {
+                Icon(Icons.Default.ArrowForward, contentDescription = "Далі", tint = Color.White)
+            }
         }
+
+        Spacer(modifier = Modifier.height(40.dp))
     }
 }
-
-

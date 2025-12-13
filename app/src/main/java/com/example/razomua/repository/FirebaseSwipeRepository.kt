@@ -30,11 +30,9 @@ class FirebaseSwipeRepository {
         return try {
             val fromUserId = getCurrentUserId() ?: return Result.failure(Exception("User not authenticated"))
 
-
             swipesRef.child(fromUserId).child(toUserId).child("action").setValue(action.name).await()
             swipesRef.child(fromUserId).child(toUserId).child("timestamp").setValue(System.currentTimeMillis()).await()
             Log.d("FirebaseSwipe", "Swipe saved: $fromUserId -> $toUserId (${action.name})")
-
 
             if (action == SwipeAction.LIKE) {
                 val match = checkForMatch(fromUserId, toUserId)
@@ -53,12 +51,10 @@ class FirebaseSwipeRepository {
 
     private suspend fun checkForMatch(user1Id: String, user2Id: String): Match? {
         return try {
-
             val reverseSwipeSnapshot = swipesRef.child(user2Id).child(user1Id).child("action").get().await()
             val reverseAction = reverseSwipeSnapshot.getValue(String::class.java)
 
             if (reverseAction == SwipeAction.LIKE.name) {
-
                 return createMatchAndChat(user1Id, user2Id)
             } else {
                 null
@@ -68,6 +64,7 @@ class FirebaseSwipeRepository {
             null
         }
     }
+
     fun getLikesReceivedCountFlow(): Flow<Int> = callbackFlow {
         val currentUserId = getCurrentUserId()
         if (currentUserId == null) {
@@ -82,7 +79,6 @@ class FirebaseSwipeRepository {
 
                 for (fromUserSnapshot in snapshot.children) {
                     val toUserSnapshot = fromUserSnapshot.child(currentUserId)
-
                     val action = toUserSnapshot.child("action").getValue(String::class.java)
 
                     if (action == "LIKE") {
@@ -123,7 +119,6 @@ class FirebaseSwipeRepository {
         matchesRef.child(user1Id).child(matchId).setValue(match).await()
         matchesRef.child(user2Id).child(matchId).setValue(match).await()
 
-
         updateUserChatLists(user1Id, user2Id, chatId)
 
         Log.d("FirebaseSwipe", "Match created: $matchId, chat: $chatId")
@@ -137,7 +132,6 @@ class FirebaseSwipeRepository {
 
             val currentTime = System.currentTimeMillis()
             val welcomeMessage = "У вас новий match! 🎉"
-
 
             val user1ChatInfo = mapOf<String, Any>(
                 "id" to user2Id,
@@ -164,7 +158,6 @@ class FirebaseSwipeRepository {
             Log.e("FirebaseSwipe", "Error updating chat lists", e)
         }
     }
-
 
     fun getUserMatches(): Flow<List<Match>> = callbackFlow {
         val userId = getCurrentUserId()
@@ -196,6 +189,7 @@ class FirebaseSwipeRepository {
             matchesRef.child(userId).removeEventListener(listener)
         }
     }
+
     fun getUserMatchesCountFlow(): Flow<Int> = callbackFlow {
         val userId = getCurrentUserId()
         if (userId == null) {
@@ -233,16 +227,33 @@ class FirebaseSwipeRepository {
     }
 
     suspend fun getUserSwipes(): Result<List<Swipe>> {
-
         return Result.success(emptyList())
     }
 
-
+    /**
+     * Отримує список доступних користувачів з фільтрацією за статевими уподобаннями
+     *
+     * Логіка:
+     * 1. Користувач бачить тільки тих, хто підходить під його genderPreference
+     * 2. І він сам підходить під genderPreference іншого користувача
+     */
     suspend fun getAvailableUsers(): Result<List<ChatUser>> {
         return try {
-            val currentUserId = getCurrentUserId() ?: return Result.failure(Exception("User not authenticated"))
+            val currentUserId = getCurrentUserId()
+                ?: return Result.failure(Exception("User not authenticated"))
 
+            Log.d("FirebaseSwipe", "=== Getting available users ===")
+            Log.d("FirebaseSwipe", "Current user ID: $currentUserId")
 
+            // 1. Отримуємо дані поточного користувача
+            val currentUserSnapshot = usersRef.child(currentUserId).get().await()
+            val currentUserGender = currentUserSnapshot.child("gender").getValue(String::class.java)
+            val currentUserPreference = currentUserSnapshot.child("genderPreference").getValue(String::class.java)
+
+            Log.d("FirebaseSwipe", "Current user gender: $currentUserGender")
+            Log.d("FirebaseSwipe", "Current user preference: $currentUserPreference")
+
+            // 2. Отримуємо всіх користувачів
             val usersSnapshot = usersRef.get().await()
             val allUsers = mutableListOf<ChatUser>()
 
@@ -253,15 +264,57 @@ class FirebaseSwipeRepository {
                 }
             }
 
+            Log.d("FirebaseSwipe", "Total users in database: ${allUsers.size}")
 
+            // 3. Отримуємо список вже переглянутих користувачів
             val swipesSnapshot = swipesRef.child(currentUserId).get().await()
             val swipedUserIds = swipesSnapshot.children.mapNotNull { it.key }.toSet()
 
+            Log.d("FirebaseSwipe", "Already swiped users: ${swipedUserIds.size}")
 
-            val availableUsers = allUsers.filter { it.id !in swipedUserIds }
+            // 4. ФІЛЬТРУЄМО за статевими уподобаннями
+            val filteredUsers = allUsers.filter { user ->
+                // Виключаємо вже переглянутих
+                if (user.id in swipedUserIds) {
+                    Log.d("FirebaseSwipe", "User ${user.name} excluded: already swiped")
+                    return@filter false
+                }
 
-            Log.d("FirebaseSwipe", "Available users: ${availableUsers.size}")
-            Result.success(availableUsers)
+                // Перевіряємо чи підходить стать користувача під наші уподобання
+                val matchesMyPreference = when (currentUserPreference) {
+                    "Чоловіки" -> user.gender == "Чоловік"
+                    "Жінки" -> user.gender == "Жінка"
+                    "Всі" -> true
+                    else -> true // Якщо уподобання не вказано, показуємо всіх
+                }
+
+                // Перевіряємо чи підходимо ми під уподобання цього користувача
+                val matchesTheirPreference = when (user.genderPreference) {
+                    "Чоловіки" -> currentUserGender == "Чоловік"
+                    "Жінки" -> currentUserGender == "Жінка"
+                    "Всі" -> true
+                    else -> true // Якщо уподобання не вказано, показуємо
+                }
+
+                val isMatch = matchesMyPreference && matchesTheirPreference
+
+                Log.d("FirebaseSwipe", "User: ${user.name}")
+                Log.d("FirebaseSwipe", "  Gender: ${user.gender}, Preference: ${user.genderPreference}")
+                Log.d("FirebaseSwipe", "  Matches my preference: $matchesMyPreference")
+                Log.d("FirebaseSwipe", "  Matches their preference: $matchesTheirPreference")
+                Log.d("FirebaseSwipe", "  Final result: $isMatch")
+
+                isMatch
+            }
+
+            Log.d("FirebaseSwipe", "Filtered available users: ${filteredUsers.size}")
+
+            // Логування відфільтрованих користувачів
+            filteredUsers.forEachIndexed { index, user ->
+                Log.d("FirebaseSwipe", "Available user #$index: ${user.name} (${user.gender})")
+            }
+
+            Result.success(filteredUsers)
         } catch (e: Exception) {
             Log.e("FirebaseSwipe", "Error getting available users", e)
             Result.failure(e)

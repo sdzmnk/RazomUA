@@ -1,5 +1,6 @@
 package com.example.razomua.ui.screens.welcome
 
+import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,10 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.razomua.ui.theme.*
+import com.example.razomua.viewmodel.RegisterViewModel
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.FlowRow
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun PreferencesSettingsScreen(navController: NavController) {
+fun PreferencesSettingsScreen(navController: NavController, registerViewModel: RegisterViewModel) {
     val searchQuery = remember { mutableStateOf("") }
     val selectedPurpose = remember { mutableStateOf<String?>(null) }
     val selectedGender = remember { mutableStateOf<String?>(null) }
@@ -38,6 +42,7 @@ fun PreferencesSettingsScreen(navController: NavController) {
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.Start
     ) {
+        // Заголовок
         Text(
             text = "Майже у цілі!",
             fontSize = 24.sp,
@@ -55,19 +60,18 @@ fun PreferencesSettingsScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
+        // Место
         Text(
             text = "Звідки ти?",
             fontSize = 18.sp,
             color = Blue,
             fontWeight = FontWeight.Medium
         )
-
         Text(
             text = "Ми запропонуємо тобі людей поруч.",
             fontSize = 14.sp,
             color = GrayDark
         )
-
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
@@ -93,7 +97,6 @@ fun PreferencesSettingsScreen(navController: NavController) {
             color = Blue,
             fontWeight = FontWeight.Medium
         )
-
         Spacer(modifier = Modifier.height(8.dp))
 
         val purposes = listOf("Серйозні стосунки", "Дружнє спілкування", "Вирішу, коли зустрінусь")
@@ -116,7 +119,6 @@ fun PreferencesSettingsScreen(navController: NavController) {
             color = Blue,
             fontWeight = FontWeight.Medium
         )
-
         Spacer(modifier = Modifier.height(8.dp))
 
         val genders = listOf("Жінки", "Чоловіки", "Усі")
@@ -139,22 +141,18 @@ fun PreferencesSettingsScreen(navController: NavController) {
             color = Blue,
             fontWeight = FontWeight.Medium
         )
-
         Text(
             text = "Обери до 5 хобі, щоб знайти спільні інтереси з іншими.",
             fontSize = 14.sp,
             color = GrayDark
         )
-
         Spacer(modifier = Modifier.height(8.dp))
-
         Text(
             text = "Обрані хобі з’являться тут",
             fontSize = 14.sp,
             color = Blue,
             fontWeight = FontWeight.Medium
         )
-
         Spacer(modifier = Modifier.height(16.dp))
 
         hobbyCategories.forEach { (category, hobbies) ->
@@ -166,36 +164,33 @@ fun PreferencesSettingsScreen(navController: NavController) {
             )
 
             FlowRow(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 hobbies.forEach { hobby ->
                     val isSelected = selectedHobbies.contains(hobby)
                     Box(
                         modifier = Modifier
                             .border(
-                                1.dp,
-                                if (isSelected) Red else GrayMedium,
-                                RoundedCornerShape(50)
+                                width = 1.dp,
+                                color = if (isSelected) Red else GrayMedium,
+                                shape = RoundedCornerShape(50)
                             )
                             .clip(RoundedCornerShape(50))
                             .clickable {
-                                if (isSelected) {
-                                    selectedHobbies.remove(hobby)
-                                } else if (selectedHobbies.size < 5) {
-                                    selectedHobbies.add(hobby)
-                                }
+                                if (isSelected) selectedHobbies.remove(hobby)
+                                else if (selectedHobbies.size < 5) selectedHobbies.add(hobby)
                             }
                             .padding(horizontal = 12.dp, vertical = 6.dp)
+                            .background(Color.Transparent)
                     ) {
                         Text(
-                            text = hobby + " +",
+                            text = hobby,
                             color = if (isSelected) Red else GrayDark,
                             fontSize = 14.sp
                         )
                     }
                 }
             }
-
             Spacer(modifier = Modifier.height(16.dp))
         }
 
@@ -206,11 +201,31 @@ fun PreferencesSettingsScreen(navController: NavController) {
             contentAlignment = Alignment.CenterEnd
         ) {
             FloatingActionButton(
-                onClick = { /* TODO: navigate next */ },
-                containerColor = Red
+                onClick = {
+                    val uid = registerViewModel.auth.currentUser?.uid ?: return@FloatingActionButton
+
+                    val prefsMap = mapOf(
+                        "purpose" to (selectedPurpose.value ?: ""),
+                        "genderPreference" to (selectedGender.value ?: ""),
+                        "hobbies" to selectedHobbies.toList(),
+                        "location" to searchQuery.value
+                    )
+
+                    registerViewModel.chatRepository.saveUserData(uid, prefsMap)
+                        .addOnSuccessListener {
+                            navController.navigate("swipe") {
+                                popUpTo("preferences") { inclusive = true }
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Log.e("Preferences", "Error saving preferences: ${e.localizedMessage}")
+                        }
+                }
             ) {
-                Icon(Icons.Default.ArrowForward, contentDescription = "Далі", tint = White)
+                Icon(Icons.Default.ArrowForward, contentDescription = "Далі", tint = Color.White)
             }
         }
+
+        Spacer(modifier = Modifier.height(40.dp))
     }
 }

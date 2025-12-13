@@ -1,7 +1,7 @@
 package com.example.razomua.ui.screens.welcome
 
+import android.icu.text.SimpleDateFormat
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,12 +17,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.razomua.R
 import com.example.razomua.model.ChatUser
 import com.example.razomua.viewmodel.ChatViewModel
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun ListChatsScreen(
@@ -32,26 +36,7 @@ fun ListChatsScreen(
     val users by viewModel.users.collectAsState()
     val isConnected by viewModel.isConnected.collectAsState()
 
-    // Мапимо Firebase користувачів на локальні зображення
-    val chatsWithImages = users.map { user ->
-        user.copy(
-            imageRes = when (user.name) {
-                "Андрій" -> R.drawable.pic_for_chat1
-                "Славік" -> R.drawable.pic_for_chat2
-                else -> R.drawable.pic_for_chat1
-            }
-        )
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.updateUserStatus(true)
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.updateUserStatus(false)
-        }
-    }
+    val chats = users
 
     Scaffold(
         bottomBar = {
@@ -104,6 +89,7 @@ fun ListChatsScreen(
                 .padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))
+
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 16.dp)
@@ -126,7 +112,7 @@ fun ListChatsScreen(
                 }
             }
 
-            if (chatsWithImages.isEmpty()) {
+            if (chats.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -139,12 +125,11 @@ fun ListChatsScreen(
                 }
             } else {
                 LazyColumn {
-                    items(chatsWithImages) { chat ->
+                    items(chats) { chat ->
                         ChatRow(
                             chat = chat,
                             navController = navController,
                             onChatClick = { selectedChat ->
-
                                 val currentUserId = viewModel.getCurrentUserId()
                                 if (currentUserId != null) {
                                     val sortedIds = listOf(currentUserId, selectedChat.id).sorted()
@@ -182,13 +167,15 @@ fun ChatRow(
             .padding(vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(id = chat.imageRes),
+        AsyncImage(
+            model = if (chat.photoUrl.isNotEmpty()) chat.photoUrl else R.drawable.pic_for_chat1,
             contentDescription = chat.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(56.dp)
-                .clip(CircleShape)
+                .clip(CircleShape),
+            error = painterResource(R.drawable.pic_for_chat1),
+            placeholder = painterResource(R.drawable.pic_for_chat1)
         )
 
         Spacer(modifier = Modifier.width(16.dp))
@@ -201,20 +188,59 @@ fun ChatRow(
                     fontWeight = FontWeight.Medium,
                     color = Color(0xFF2A0000)
                 )
+
                 Spacer(modifier = Modifier.width(8.dp))
-                Box(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .clip(CircleShape)
-                        .background(if (chat.isOnline) Color.Green else Color.Gray)
-                )
+
+                if (chat.isOnline) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(Color.Green)
+                    )
+                } else {
+                    Text(
+                        text = "• ${getLastSeenText(chat.lastSeen)}",
+                        fontSize = 12.sp,
+                        color = Color.Gray
+                    )
+                }
             }
+
+            Spacer(modifier = Modifier.height(4.dp))
+
             Text(
                 text = chat.lastMessage,
                 fontSize = 14.sp,
                 color = Color(0xFF4A4A4A),
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
+        }
+    }
+}
+
+fun getLastSeenText(lastSeen: Long): String {
+    if (lastSeen == 0L) return "давно не заходив"
+
+    val now = System.currentTimeMillis()
+    val diff = now - lastSeen
+
+    val seconds = diff / 1000
+    val minutes = seconds / 60
+    val hours = minutes / 60
+    val days = hours / 24
+
+    return when {
+        seconds < 60 -> "щойно"
+        minutes < 60 -> "$minutes хв. тому"
+        hours < 24 -> "$hours год. тому"
+        days == 1L -> "вчора"
+        days < 7 -> "$days дн. тому"
+        else -> {
+            val date = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
+                .format(Date(lastSeen))
+            date
         }
     }
 }

@@ -7,10 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.razomua.model.ChatUser
 import com.example.razomua.model.Message
 import com.example.razomua.repository.FirebaseChatRepository
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class ChatViewModel(
     private val repository: FirebaseChatRepository = FirebaseChatRepository()
@@ -29,15 +31,42 @@ class ChatViewModel(
 
     init {
         initializeUser()
+        setupPresence()
         loadUsers()
+    }
+
+    private fun setupPresence() {
+        repository.setupPresence().onSuccess {
+            Log.d("ChatViewModel", "Presence system initialized")
+        }.onFailure { error ->
+            Log.e("ChatViewModel", "Failed to setup presence", error)
+        }
     }
 
     private fun initializeUser() {
         viewModelScope.launch {
-            repository.initializeCurrentUser().onSuccess {
-                _isConnected.value = true
-            }.onFailure {
+            val userId = repository.getCurrentUserId()
+            if (userId != null) {
+                try {
+                    val userSnapshot = FirebaseDatabase.getInstance()
+                        .getReference("users")
+                        .child(userId)
+                        .get()
+                        .await()
 
+                    val photoUrl = userSnapshot.child("photoUrl").getValue(String::class.java) ?: ""
+
+                    repository.initializeCurrentUser(photoUrl).onSuccess {
+                        _isConnected.value = true
+                    }.onFailure {
+                        Log.e("ChatViewModel", "Failed to initialize user", it)
+                    }
+                } catch (e: Exception) {
+                    Log.e("ChatViewModel", "Error getting photoUrl", e)
+                    repository.initializeCurrentUser("").onSuccess {
+                        _isConnected.value = true
+                    }
+                }
             }
         }
     }

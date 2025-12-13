@@ -121,7 +121,11 @@ fun RegisterScreen(
                 Button(
                     onClick = {
                         if (isValid) {
-                            viewModel.register(email, password, name)
+                            viewModel.register(email, password, name) { success ->
+                                if (success) {
+                                    navController.navigate("register2")
+                                }
+                            }
                         }
                     },
                     shape = CircleShape,
