@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
 
         FirebaseApp.initializeApp(this)
 
-        // Подключаем Debug App Check
         val debugFactory = DebugAppCheckProviderFactory.getInstance()
         FirebaseAppCheck.getInstance().installAppCheckProviderFactory(debugFactory)
 
