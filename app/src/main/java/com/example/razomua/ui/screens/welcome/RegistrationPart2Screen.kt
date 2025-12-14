@@ -8,6 +8,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -45,6 +46,13 @@ fun RegistrationPart2Screen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val imageRepository = remember { ImageRepository() }
+    val isFormValid =
+        selectedGender.value != null &&
+                day.value.isNotBlank() &&
+                month.value.isNotBlank() &&
+                year.value.isNotBlank() &&
+                uploadedImageUrl.value != null &&
+                !isUploading.value
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
@@ -199,36 +207,50 @@ fun RegistrationPart2Screen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Box(
+        Column(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.CenterEnd
+            horizontalAlignment = Alignment.End
         ) {
-            FloatingActionButton(
+            Button(
                 onClick = {
-                    if (isUploading.value) return@FloatingActionButton
                     val birthday = "${day.value}.${month.value}.${year.value}"
-                    val uid = registerViewModel.auth.currentUser?.uid ?: return@FloatingActionButton
+                    val uid = registerViewModel.auth.currentUser?.uid ?: return@Button
 
                     val userMap = hashMapOf(
-                        "gender" to (selectedGender.value ?: ""),
+                        "gender" to selectedGender.value!!,
                         "birthday" to birthday,
-                        "photoUrl" to (uploadedImageUrl.value ?: "")
+                        "photoUrl" to uploadedImageUrl.value!!
                     )
 
                     registerViewModel.chatRepository.saveUserData(uid, userMap)
                         .addOnSuccessListener {
-                            Log.d("RegistrationPart2", "User data saved successfully")
                             navController.navigate("register3")
                         }
                         .addOnFailureListener { e ->
-                            Log.e("RegistrationPart2", "Error saving user data: ${e.localizedMessage}")
+                            Log.e(
+                                "RegistrationPart2",
+                                "Error saving user data: ${e.localizedMessage}"
+                            )
                         }
                 },
-                containerColor = if (isUploading.value) Color.Gray else Color(0xFF1A1A9E)
+                enabled = isFormValid,
+                shape = CircleShape,
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(bottom = 40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isFormValid) Color(0xFF1A1A9E) else Color.LightGray,
+                    disabledContainerColor = Color.LightGray
+                )
             ) {
-                Icon(Icons.Default.ArrowForward, contentDescription = "Далі", tint = Color.White)
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Далі",
+                    tint = Color.White
+                )
             }
         }
+
 
         Spacer(modifier = Modifier.height(40.dp))
     }

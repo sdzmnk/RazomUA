@@ -30,6 +30,7 @@ fun LoginScreen(
 ) {
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
+    val isFormValid = email.isNotBlank() && password.isNotBlank()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -99,12 +100,16 @@ fun LoginScreen(
             ) {
                 Button(
                     onClick = { viewModel.login() },
+                    enabled = isFormValid,
                     shape = CircleShape,
                     modifier = Modifier
                         .padding(bottom = 40.dp)
                         .size(70.dp)
                         .testTag("loginButton"),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isFormValid) Color.Red else Color.LightGray,
+                        disabledContainerColor = Color.LightGray
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
@@ -112,6 +117,7 @@ fun LoginScreen(
                         tint = Color.White
                     )
                 }
+
             }
         }
     }

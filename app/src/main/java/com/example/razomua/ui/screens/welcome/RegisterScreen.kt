@@ -120,20 +120,20 @@ fun RegisterScreen(
             ) {
                 Button(
                     onClick = {
-                        if (isValid) {
-                            viewModel.register(email, password, name) { success ->
-                                if (success) {
-                                    navController.navigate("register2")
-                                }
+                        viewModel.register(email, password, name) { success ->
+                            if (success) {
+                                navController.navigate("register2")
                             }
                         }
                     },
+                    enabled = isValid,
                     shape = CircleShape,
                     modifier = Modifier
                         .padding(bottom = 40.dp)
                         .size(70.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isValid) Color(0xFFFF4545) else Color.LightGray
+                        containerColor = if (isValid) Color(0xFFFF4545) else Color.LightGray,
+                        disabledContainerColor = Color.LightGray
                     )
                 ) {
                     Icon(
@@ -142,6 +142,7 @@ fun RegisterScreen(
                         tint = Color.White
                     )
                 }
+
             }
         }
     }
