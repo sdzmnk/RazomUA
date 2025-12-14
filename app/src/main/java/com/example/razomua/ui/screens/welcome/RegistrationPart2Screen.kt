@@ -241,11 +241,10 @@ fun RegistrationPart2Screen(
                 },
                 enabled = isFormValid,
                 shape = CircleShape,
-                modifier = Modifier
-                    .size(70.dp)
-                    .padding(bottom = 40.dp),
+                modifier = Modifier.size(70.dp),
+                contentPadding = PaddingValues(0.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = if (isFormValid) Color(0xFF1A1A9E) else Color.LightGray,
+                    containerColor = if (isFormValid) Color.Red else Color.LightGray,
                     disabledContainerColor = Color.LightGray
                 )
             ) {
