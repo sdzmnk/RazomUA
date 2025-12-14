@@ -25,8 +25,8 @@ import com.google.firebase.appcheck.debug.DebugAppCheckProviderFactory
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : ComponentActivity() {
-    private var isDarkTheme by mutableStateOf(false)
-    private lateinit var lightSensorManager: LightSensorManager
+//    private var isDarkTheme by mutableStateOf(false)
+//    private lateinit var lightSensorManager: LightSensorManager
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,14 +47,12 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
 
-        lightSensorManager = LightSensorManager(this) { isDark ->
-            isDarkTheme = isDark
-        }
+//        lightSensorManager = LightSensorManager(this) { isDark ->
+//            isDarkTheme = isDark
+//        }
 
         setContent {
-            RazomUATheme(darkTheme = isDarkTheme) {
-//                val webSocketViewModel: WebSocketViewModel = viewModel()
-//                AppNavHost(webSocketViewModel)
+            RazomUATheme {
                 AppNavHost()
             }
         }
@@ -74,11 +72,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        lightSensorManager.start()
+//        lightSensorManager.start()
     }
 
     override fun onPause() {
         super.onPause()
-        lightSensorManager.stop()
+//        lightSensorManager.stop()
     }
 }

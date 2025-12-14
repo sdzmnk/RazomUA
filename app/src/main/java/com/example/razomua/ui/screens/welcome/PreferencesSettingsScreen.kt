@@ -19,6 +19,7 @@ import com.example.razomua.ui.theme.*
 import com.example.razomua.viewmodel.RegisterViewModel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.shape.CircleShape
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
@@ -27,6 +28,11 @@ fun PreferencesSettingsScreen(navController: NavController, registerViewModel: R
     val selectedPurpose = remember { mutableStateOf<String?>(null) }
     val selectedGender = remember { mutableStateOf<String?>(null) }
     val selectedHobbies = remember { mutableStateListOf<String>() }
+    val isFormValid =
+        searchQuery.value.isNotBlank() &&
+                selectedPurpose.value != null &&
+                selectedGender.value != null &&
+                selectedHobbies.isNotEmpty()
 
     val hobbyCategories = mapOf(
         "Активність" to listOf("Йога", "Тренажерний зал", "Біг", "Танці", "Плавання"),
@@ -42,7 +48,6 @@ fun PreferencesSettingsScreen(navController: NavController, registerViewModel: R
             .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.Start
     ) {
-        // Заголовок
         Text(
             text = "Майже у цілі!",
             fontSize = 24.sp,
@@ -60,7 +65,6 @@ fun PreferencesSettingsScreen(navController: NavController, registerViewModel: R
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Место
         Text(
             text = "Звідки ти?",
             fontSize = 18.sp,
@@ -200,13 +204,13 @@ fun PreferencesSettingsScreen(navController: NavController, registerViewModel: R
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd
         ) {
-            FloatingActionButton(
+            Button(
                 onClick = {
-                    val uid = registerViewModel.auth.currentUser?.uid ?: return@FloatingActionButton
+                    val uid = registerViewModel.auth.currentUser?.uid ?: return@Button
 
                     val prefsMap = mapOf(
-                        "purpose" to (selectedPurpose.value ?: ""),
-                        "genderPreference" to (selectedGender.value ?: ""),
+                        "purpose" to selectedPurpose.value!!,
+                        "genderPreference" to selectedGender.value!!,
                         "hobbies" to selectedHobbies.toList(),
                         "location" to searchQuery.value
                     )
@@ -218,12 +222,29 @@ fun PreferencesSettingsScreen(navController: NavController, registerViewModel: R
                             }
                         }
                         .addOnFailureListener { e ->
-                            Log.e("Preferences", "Error saving preferences: ${e.localizedMessage}")
+                            Log.e(
+                                "Preferences",
+                                "Error saving preferences: ${e.localizedMessage}"
+                            )
                         }
-                }
+                },
+                enabled = isFormValid,
+                shape = CircleShape,
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(bottom = 40.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isFormValid) Red else Color.LightGray,
+                    disabledContainerColor = Color.LightGray
+                )
             ) {
-                Icon(Icons.Default.ArrowForward, contentDescription = "Далі", tint = Color.White)
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Далі",
+                    tint = Color.White
+                )
             }
+
         }
 
         Spacer(modifier = Modifier.height(40.dp))

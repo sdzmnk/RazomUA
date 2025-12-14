@@ -19,6 +19,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.razomua.ui.theme.Blue
 import com.example.razomua.ui.theme.GrayMedium
+import com.example.razomua.ui.theme.Montserrat
 import com.example.razomua.viewmodel.LoginViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,6 +31,7 @@ fun LoginScreen(
 ) {
     val email by viewModel.email.observeAsState("")
     val password by viewModel.password.observeAsState("")
+    val isFormValid = email.isNotBlank() && password.isNotBlank()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -62,6 +64,7 @@ fun LoginScreen(
                     text = "Введи свої дані, щоб продовжити",
                     fontSize = 24.sp,
                     color = Blue,
+                    fontFamily = Montserrat,
                     modifier = Modifier.padding(top = 80.dp, bottom = 40.dp)
                 )
 
@@ -99,12 +102,16 @@ fun LoginScreen(
             ) {
                 Button(
                     onClick = { viewModel.login() },
+                    enabled = isFormValid,
                     shape = CircleShape,
                     modifier = Modifier
                         .padding(bottom = 40.dp)
                         .size(70.dp)
                         .testTag("loginButton"),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isFormValid) Color.Red else Color.LightGray,
+                        disabledContainerColor = Color.LightGray
+                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.ArrowForward,
@@ -112,6 +119,7 @@ fun LoginScreen(
                         tint = Color.White
                     )
                 }
+
             }
         }
     }

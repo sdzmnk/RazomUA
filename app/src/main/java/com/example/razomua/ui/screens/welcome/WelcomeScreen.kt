@@ -46,6 +46,7 @@ fun WelcomeScreen(navController: NavController) {
             fontWeight = FontWeight.Medium,
             color = Color(0xFF3F51B5), // синій
             textAlign = TextAlign.Center,
+            fontFamily = Montserrat,
             modifier = Modifier.padding(bottom = 48.dp)
         )
 

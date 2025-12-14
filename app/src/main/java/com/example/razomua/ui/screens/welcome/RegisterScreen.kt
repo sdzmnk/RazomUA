@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.razomua.ui.theme.Blue
 import com.example.razomua.ui.theme.GrayMedium
+import com.example.razomua.ui.theme.Montserrat
 import com.example.razomua.viewmodel.RegisterViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -72,6 +73,7 @@ fun RegisterScreen(
                     text = "Введи свої дані, щоб зареєструватися",
                     fontSize = 24.sp,
                     color = Blue,
+                    fontFamily = Montserrat,
                     modifier = Modifier.padding(top = 80.dp, bottom = 40.dp)
                 )
 
@@ -120,20 +122,20 @@ fun RegisterScreen(
             ) {
                 Button(
                     onClick = {
-                        if (isValid) {
-                            viewModel.register(email, password, name) { success ->
-                                if (success) {
-                                    navController.navigate("register2")
-                                }
+                        viewModel.register(email, password, name) { success ->
+                            if (success) {
+                                navController.navigate("register2")
                             }
                         }
                     },
+                    enabled = isValid,
                     shape = CircleShape,
                     modifier = Modifier
                         .padding(bottom = 40.dp)
                         .size(70.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isValid) Color(0xFFFF4545) else Color.LightGray
+                        containerColor = if (isValid) Color(0xFFFF4545) else Color.LightGray,
+                        disabledContainerColor = Color.LightGray
                     )
                 ) {
                     Icon(
@@ -142,6 +144,7 @@ fun RegisterScreen(
                         tint = Color.White
                     )
                 }
+
             }
         }
     }
