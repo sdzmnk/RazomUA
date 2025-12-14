@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.razomua.ui.theme.Blue
 import com.example.razomua.ui.theme.GrayMedium
+import com.example.razomua.ui.theme.Montserrat
 import com.example.razomua.viewmodel.RegisterViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -72,6 +73,7 @@ fun RegisterScreen(
                     text = "Введи свої дані, щоб зареєструватися",
                     fontSize = 24.sp,
                     color = Blue,
+                    fontFamily = Montserrat,
                     modifier = Modifier.padding(top = 80.dp, bottom = 40.dp)
                 )
 

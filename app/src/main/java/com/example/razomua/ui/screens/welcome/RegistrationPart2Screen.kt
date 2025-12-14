@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.razomua.repository.ImageRepository
+import com.example.razomua.ui.theme.Montserrat
 import com.example.razomua.viewmodel.RegisterViewModel
 import kotlinx.coroutines.launch
 
@@ -86,7 +87,8 @@ fun RegistrationPart2Screen(
             text = "Давай знайомитися!",
             fontSize = 24.sp,
             color = Color(0xFF1A1A9E),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = Montserrat,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -94,7 +96,8 @@ fun RegistrationPart2Screen(
         Text(
             text = "Розкажи про себе — це допоможе створити профіль.",
             fontSize = 14.sp,
-            color = Color.Gray
+            color = Color.Gray,
+            fontFamily = Montserrat,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -103,7 +106,8 @@ fun RegistrationPart2Screen(
             text = "Ваш гендер?",
             fontSize = 18.sp,
             color = Color(0xFF1A1A9E),
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            fontFamily = Montserrat,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -129,7 +133,8 @@ fun RegistrationPart2Screen(
             text = "Коли у тебе день народження?",
             fontSize = 18.sp,
             color = Color(0xFF1A1A9E),
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            fontFamily = Montserrat,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -167,7 +172,8 @@ fun RegistrationPart2Screen(
             text = "Додай свою фотографію",
             fontSize = 18.sp,
             color = Color(0xFF1A1A9E),
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            fontFamily = Montserrat,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
