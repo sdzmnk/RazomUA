@@ -52,7 +52,9 @@ class MainActivity : ComponentActivity() {
 //        }
 
         setContent {
-            AppNavHost()
+            RazomUATheme {
+                AppNavHost()
+            }
         }
     }
 
